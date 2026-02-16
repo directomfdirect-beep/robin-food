@@ -167,11 +167,12 @@ export const DEFAULT_USER = {
   },
 };
 
-// Navigation tabs
+// Navigation tabs (5 tabs per Nav v1.4.5)
 export const NAV_TABS = [
-  { id: 'catalog', label: 'Лоты' },
-  { id: 'map', label: 'Радар' },
+  { id: 'home', label: 'Главная' },
+  { id: 'search', label: 'Поиск' },
   { id: 'cart', label: 'Корзина' },
+  { id: 'favorites', label: 'Избранное' },
   { id: 'profile', label: 'Профиль' },
 ];
 

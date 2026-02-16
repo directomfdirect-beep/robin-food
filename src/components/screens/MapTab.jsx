@@ -11,20 +11,20 @@ const DEFAULT_CENTER = { lat: 55.7282, lng: 37.5795 };
 
 /**
  * Radar/Map tab with Uber-style visualization
+ * @param {boolean} isActive - Whether the tab is currently visible
+ * @param {Function} onApplyRadar - Callback with (center, radius) when user clicks search
  */
-export const MapTab = ({ isActive, onSearchCatalog }) => {
+export const MapTab = ({ isActive, onApplyRadar }) => {
   const [radarRadius, setRadarRadius] = useState(1.5);
   const [address, setAddress] = useState('');
   const [center, setCenter] = useState(DEFAULT_CENTER);
 
-  // Initialize map when tab is active
   useMap({
     enabled: isActive,
     radius: radarRadius,
     center: center,
   });
 
-  // Handle address selection from autocomplete
   const handleAddressSelect = useCallback((data) => {
     setCenter({
       lat: data.lat,
@@ -32,11 +32,16 @@ export const MapTab = ({ isActive, onSearchCatalog }) => {
     });
   }, []);
 
-  // Reset to default location
   const handleResetLocation = useCallback(() => {
     setCenter(DEFAULT_CENTER);
     setAddress('');
   }, []);
+
+  const handleSearch = useCallback(() => {
+    if (onApplyRadar) {
+      onApplyRadar(center, radarRadius);
+    }
+  }, [center, radarRadius, onApplyRadar]);
 
   return (
     <div className="h-full flex flex-col relative animate-fade-in bg-[#f8f8f8]">
@@ -93,15 +98,15 @@ export const MapTab = ({ isActive, onSearchCatalog }) => {
             </div>
           </div>
 
-        {/* Search button */}
-        <Button
-          onClick={onSearchCatalog}
-          fullWidth
-          size="md"
-          className="!bg-black !text-white hover:!bg-gray-800 !rounded-2xl !py-4 ga-button"
-        >
-          Искать лоты
-        </Button>
+          {/* Search button */}
+          <Button
+            onClick={handleSearch}
+            fullWidth
+            size="md"
+            className="!bg-black !text-white hover:!bg-gray-800 !rounded-2xl !py-4 ga-button"
+          >
+            Искать лоты
+          </Button>
         </div>
       </div>
     </div>

@@ -94,6 +94,7 @@ export const ProfileTab = ({
   onTermsClick,
   onPrivacyPolicyClick,
   onPrivacySettingsClick,
+  onSmartAlertsClick,
   onLogout,
 }) => {
   const [notifications, setNotifications] = useState(user.preferences?.notificationsEnabled ?? true);
@@ -217,6 +218,11 @@ export const ProfileTab = ({
             label="Избранное"
             badge={favoritesCount}
             onClick={onFavoritesClick}
+          />
+          <MenuItem
+            icon={Bell}
+            label="Умные уведомления"
+            onClick={onSmartAlertsClick}
           />
           <MenuItem
             icon={Tag}

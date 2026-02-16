@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { STORES, CHAINS } from '@/data/constants';
+import { STORES } from '@/data/constants';
 import { MASTER_CATALOG } from '@/data/catalog';
 import { syncProductsToDatabase, checkDatabaseConnection } from '@/lib/supabase';
 
@@ -70,7 +70,7 @@ export const useStoreSelection = () => {
   // Shopping mode: 'single', 'multi', or null (not chosen yet)
   const [shoppingMode, setShoppingMode] = useState(null);
   
-  // Selected chain filter (null = all chains)
+  // Selected chain filter (reserved for future use)
   const [selectedChain, setSelectedChain] = useState(null);
   
   // Database sync status
@@ -91,10 +91,7 @@ export const useStoreSelection = () => {
         store.lng
       );
       return distance <= radius;
-    }).map((store) => ({
-      ...store,
-      chainInfo: CHAINS[store.chain] || {},
-    }));
+    });
 
     if (stores.length === 0) {
       setStoresInRadius([]);
@@ -124,8 +121,6 @@ export const useStoreSelection = () => {
         storeId: store.id,
         storeName: store.name,
         storeAddress: store.address,
-        chain: store.chain,
-        chainInfo: store.chainInfo,
       };
       
       distribution[store.id].push(productWithStore);
@@ -217,14 +212,14 @@ export const useStoreSelection = () => {
   }, []);
 
   /**
-   * Get unique chains from stores in radius
+   * Get unique store names in radius
    */
   const chainsInRadius = useMemo(() => {
-    const chainIds = new Set(storesInRadius.map((s) => s.chain));
-    return Array.from(chainIds).map((id) => ({
-      id,
-      ...CHAINS[id],
-      storeCount: storesInRadius.filter((s) => s.chain === id).length,
+    const names = new Set(storesInRadius.map((s) => s.name));
+    return Array.from(names).map((name) => ({
+      id: name,
+      name,
+      storeCount: storesInRadius.filter((s) => s.name === name).length,
     }));
   }, [storesInRadius]);
 
@@ -247,14 +242,9 @@ export const useStoreSelection = () => {
 
     // Get all products from stores
     let products = Object.values(storeProducts).flat();
-    
-    // Filter by chain if selected
-    if (selectedChain) {
-      products = products.filter((p) => p.chain === selectedChain);
-    }
 
     return products;
-  }, [radarApplied, selectedStore, storeProducts, selectedChain]);
+  }, [radarApplied, selectedStore, storeProducts]);
 
   /**
    * Get store by ID
@@ -279,7 +269,6 @@ export const useStoreSelection = () => {
     
     // Constants
     SHOPPING_MODES,
-    CHAINS,
     
     // Methods
     applyRadar,
