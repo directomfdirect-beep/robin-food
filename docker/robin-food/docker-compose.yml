@@ -222,6 +222,37 @@ services:
       - robin-food-network
 
   # ===========================================
+  # Robin Food API (Express backend)
+  # ===========================================
+  api:
+    container_name: robin-food-api
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-3001}:3001"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-robin_food}
+      DB_USER: postgres
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET:-robin-food-jwt-secret-dev}
+      SMSC_LOGIN: ${SMSC_LOGIN:-}
+      SMSC_PASSWORD: ${SMSC_PASSWORD:-}
+      TINKOFF_TERMINAL_KEY: ${TINKOFF_TERMINAL_KEY:-}
+      TINKOFF_PASSWORD: ${TINKOFF_PASSWORD:-}
+      FCM_SERVER_KEY: ${FCM_SERVER_KEY:-}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+      PORT: 3001
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - robin-food-network
+
+  # ===========================================
   # Image Proxy (for storage transformations)
   # ===========================================
   imgproxy:

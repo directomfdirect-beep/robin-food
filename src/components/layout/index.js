@@ -1,2 +1,2 @@
-export { Header, SectionHeader } from './Header';
-export { BottomNav, TabBar } from './BottomNav';
+export { Header } from './Header';
+export { BottomNav } from './BottomNav';

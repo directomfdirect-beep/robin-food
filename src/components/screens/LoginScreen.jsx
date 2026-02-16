@@ -1,21 +1,40 @@
 import React, { useState } from 'react';
 import { formatPhone, isValidPhone } from '@/utils/phone';
 import { Button } from '@/components/ui/Button';
+import { auth } from '@/lib/api';
 
 /**
  * Login screen with phone number input
+ * Sends OTP via backend API, falls back to mock on error
  */
 export const LoginScreen = ({ onSubmit }) => {
   const [phone, setPhone] = useState('+7');
   const [isAgreed, setIsAgreed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handlePhoneChange = (e) => {
     setPhone(formatPhone(e.target.value));
+    setError('');
   };
 
-  const handleSubmit = () => {
-    if (isValidPhone(phone) && isAgreed) {
-      onSubmit(phone);
+  const handleSubmit = async () => {
+    if (!isValidPhone(phone) || !isAgreed) return;
+    setLoading(true);
+    setError('');
+    try {
+      const cleanPhone = phone.replace(/[\s()-]/g, '');
+      await auth.sendOtp(cleanPhone);
+      onSubmit(cleanPhone);
+    } catch (err) {
+      if (err.code === 'RATE_LIMITED') {
+        setError('Подождите 60 секунд перед повторной отправкой');
+      } else {
+        console.warn('API unavailable, using mock OTP flow:', err.message);
+        onSubmit(phone);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,14 +81,18 @@ export const LoginScreen = ({ onSubmit }) => {
         </label>
       </div>
 
+      {error && (
+        <p className="text-red-500 text-sm mt-4">{error}</p>
+      )}
+
       <Button
         onClick={handleSubmit}
-        disabled={!isValid}
+        disabled={!isValid || loading}
         fullWidth
         size="lg"
         className="mt-10"
       >
-        Отправить код
+        {loading ? 'Отправка...' : 'Отправить код'}
       </Button>
     </div>
   );

@@ -1,11 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/Button';
+import { auth } from '@/lib/api';
 
 /**
- * SMS code verification screen
+ * SMS code verification screen (6-digit OTP)
+ * Verifies via backend API, falls back to mock on error
  */
 export const SmsScreen = ({ phone, onVerify }) => {
-  const [smsCode, setSmsCode] = useState(['', '', '', '']);
+  const [smsCode, setSmsCode] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const inputsRef = useRef([]);
 
   const handleChange = (value, index) => {
@@ -13,8 +17,9 @@ export const SmsScreen = ({ phone, onVerify }) => {
     const newValues = [...smsCode];
     newValues[index] = char;
     setSmsCode(newValues);
+    setError('');
 
-    if (char && index < 3) {
+    if (char && index < 5) {
       inputsRef.current[index + 1]?.focus();
     }
   };
@@ -22,6 +27,41 @@ export const SmsScreen = ({ phone, onVerify }) => {
   const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace' && !smsCode[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (pasted.length > 0) {
+      const newValues = [...smsCode];
+      for (let i = 0; i < pasted.length; i++) {
+        newValues[i] = pasted[i];
+      }
+      setSmsCode(newValues);
+      const nextIndex = Math.min(pasted.length, 5);
+      inputsRef.current[nextIndex]?.focus();
+    }
+  };
+
+  const handleVerify = async () => {
+    const code = smsCode.join('');
+    if (code.length !== 6) return;
+
+    setLoading(true);
+    setError('');
+    try {
+      const data = await auth.verifyOtp(phone, code);
+      onVerify(data.user || {});
+    } catch (err) {
+      if (err.status === 400) {
+        setError(err.message || 'Неверный код');
+      } else {
+        console.warn('API unavailable, using mock verify:', err.message);
+        onVerify({});
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,7 +76,7 @@ export const SmsScreen = ({ phone, onVerify }) => {
         Отправлено на {phone}
       </p>
 
-      <div className="flex gap-3 mb-10">
+      <div className="flex gap-3 mb-4">
         {smsCode.map((val, i) => (
           <input
             key={i}
@@ -47,18 +87,24 @@ export const SmsScreen = ({ phone, onVerify }) => {
             maxLength={1}
             onChange={(e) => handleChange(e.target.value, i)}
             onKeyDown={(e) => handleKeyDown(e, i)}
-            className="w-14 h-16 bg-gray-100 border-2 border-transparent rounded-2xl text-2xl font-bold text-center focus:outline-none focus:border-brand-green transition-colors"
+            onPaste={i === 0 ? handlePaste : undefined}
+            className="w-12 h-14 bg-gray-100 border-2 border-transparent rounded-2xl text-xl font-bold text-center focus:outline-none focus:border-brand-green transition-colors"
           />
         ))}
       </div>
 
+      {error && (
+        <p className="text-red-500 text-sm mb-6">{error}</p>
+      )}
+      {!error && <div className="mb-6" />}
+
       <Button
-        onClick={onVerify}
-        disabled={!isComplete}
+        onClick={handleVerify}
+        disabled={!isComplete || loading}
         fullWidth
         size="lg"
       >
-        Подтвердить
+        {loading ? 'Проверка...' : 'Подтвердить'}
       </Button>
     </div>
   );

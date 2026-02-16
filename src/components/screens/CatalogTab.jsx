@@ -1,34 +1,59 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { CategoryFilter } from '@/components/CategoryFilter';
 import { ProductCard } from '@/components/ProductCard';
 import { MASTER_CATALOG } from '@/data/catalog';
+import { catalog as catalogApi, search as searchApi } from '@/lib/api';
 import { Search, SlidersHorizontal } from 'lucide-react';
 
 /**
- * Catalog tab with product grid - Goldapple style
+ * Catalog tab with product grid
+ * Fetches from API when available, falls back to static MASTER_CATALOG
  */
 export const CatalogTab = ({
   favorites,
   onToggleFavorite,
   onProductClick,
+  storeId,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Все');
+  const [apiProducts, setApiProducts] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [useApi, setUseApi] = useState(true);
+
+  const loadProducts = useCallback(async () => {
+    if (!useApi || !storeId) return;
+    setLoading(true);
+    try {
+      const params = {};
+      if (selectedCategory !== 'Все') params.category = selectedCategory;
+      const data = await catalogApi.getProducts(storeId, params);
+      setApiProducts(data.products || data);
+    } catch {
+      setUseApi(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [storeId, selectedCategory, useApi]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const filteredCatalog = useMemo(() => {
-    let list = MASTER_CATALOG;
+    let list = apiProducts || MASTER_CATALOG;
 
-    if (selectedCategory !== 'Все') {
+    if (!apiProducts && selectedCategory !== 'Все') {
       list = list.filter((p) => p.category === selectedCategory);
     }
 
     if (searchQuery) {
       const query = searchQuery.toUpperCase();
-      list = list.filter((p) => p.title.toUpperCase().includes(query));
+      list = list.filter((p) => (p.title || p.name || '').toUpperCase().includes(query));
     }
 
     return list;
-  }, [selectedCategory, searchQuery]);
+  }, [apiProducts, selectedCategory, searchQuery]);
 
   return (
     <div className="p-6 animate-fade-in">
@@ -58,7 +83,7 @@ export const CatalogTab = ({
       {/* Results count */}
       <div className="flex justify-between items-center mb-4">
         <p className="text-[10px] font-bold uppercase text-gray-400">
-          {filteredCatalog.length} лотов
+          {loading ? '...' : `${filteredCatalog.length} лотов`}
         </p>
         <button className="flex items-center gap-1 text-[10px] font-bold uppercase text-gray-400">
           <SlidersHorizontal size={14} />
