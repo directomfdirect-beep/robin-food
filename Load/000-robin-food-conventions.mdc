@@ -1,0 +1,81 @@
+---
+description: "Robin Food project-wide conventions — ALWAYS loaded"
+globs:
+alwaysApply: true
+---
+
+# Robin Food — Project Conventions (always active)
+
+## Product Context
+- Grocery delivery aggregator, mobile app (iOS + Android, React Native)
+- Target market: Russia (MVP), ru-RU locale
+- Three roles: **customer** (buyer app), **picker** (picker app), **partner** (API)
+- Scheme: `robinfood://`
+
+## Document Versions (v1.4.5 / v1.2.3 / v1.6.5 — 16.02.2026)
+| Document | Version | Min Compatible |
+|---|---|---|
+| Spec | v1.4.5 | v1.4.3 |
+| API Contract | v1.4.5 | v1.4.3 |
+| Data Model | v1.4.11 | v1.4.9 |
+| Navigation | v1.4.5 | v1.4.4 |
+| Integration Contracts | v1.6.5 | v1.6.3 |
+| BNPL Integration | v1.2.3 | v1.2.2 |
+| Settlement | v1.2.3 | v1.2.2 |
+
+## Naming
+- DB entities: `snake_case` (e.g. `customer_order`, `app_user`, `order_item`)
+- API paths: `kebab-case` (`/api/v1/smart-alerts`)
+- API fields: `camelCase` (`totalAmount`, `isNewUser`)
+- Error codes: `UPPER_SNAKE_CASE` (`INVALID_OTP`, `BNPL_BELOW_MIN`)
+- Enums DB: lowercase (`pending`, `confirmed`, `picking`, `ready`, `customerarrived`, `completed`, `cancelled`)
+
+## Money & Localization (Spec v1.4.5 sec 14)
+- Backend: **kopecks** (integer), e.g. `46704` = 467.04 ₽
+- API response: kopecks integer
+- UI display: `amount / 100` → comma decimal, e.g. `467,04 ₽`; thousands: `1 234,56 ₽`
+- Dates UI: `dd.MM.yyyy`, time `HH:mm` 24h
+- Timezone: CRON/UI = MSK (`Europe/Moscow`); API/DB = UTC ISO 8601
+
+## API Versioning (Spec v1.4.5 sec 2.16)
+- URL prefix: `/api/v1/...`
+- Non-breaking changes (optional fields, new enum values) → keep v1
+- Breaking changes → new major `/api/v2/...`, v1 supported 3 months
+- Deprecation: `Deprecation: true` + `Sunset: <date>` headers, email 30 days before
+- CI: `oasdiff breaking` on every PR
+
+## API Format
+- Pagination: cursor-based (`?cursor=`)
+- Errors: `{ "code": "UPPER_SNAKE", "message": "...", "details": {} }`
+- Auth: JWT RS256 (`Authorization: Bearer <token>`)
+- Real-time: WebSocket `wss://api.robinfood.ru/ws?token=`
+
+## Security (Spec v1.4.5 sec 12.6)
+- TLS 1.2+ everywhere
+- PII encrypted at rest (pgcrypto), masked in logs (`+7***4567`)
+- IP whitelists (Tinkoff webhook): config-driven env `TINKOFF_WEBHOOK_IP_RANGES`, runbook RF-NET-01
+- OWASP Top 10 pre-launch checklist
+
+## Key Business Rules
+- Max 3 parallel active orders per customer (BR-CART-1)
+- Hold 15 min → auto-cancel + refund
+- Active statuses: pending, confirmed, picking, ready, customerarrived
+- Capture at picking→ready (NOT completed)
+- Smart Alerts: push-only, no auto-charges, max 20 per user
+- Delete account: 30-day grace, blocked if active orders (BR-DEL-1)
+- WCAG 2.1/2.2 AA required
+
+## State Machine (customerorder.status)
+```
+pending → confirmed → picking → ready → customerarrived → completed
+  ↓          ↓          ↓        ↓            ↓
+cancelled  cancelled  cancelled  (no cancel)  (no cancel)
+```
+Cancel allowed: pending, confirmed, picking. NOT allowed: ready, customerarrived, completed.
+
+## Infrastructure (Spec v1.4.5 sec 12)
+- DB: PostgreSQL 16, PgBouncer (50 conn, transaction mode)
+- Cache: Redis (product 5min, store 10min, suggest 2min, category 30min)
+- CDN: Yandex CDN (images 1yr immutable)
+- S3: Yandex Object Storage
+- Push: FCM primary, SMS fallback (SMSC.ru), RuStore post-MVP

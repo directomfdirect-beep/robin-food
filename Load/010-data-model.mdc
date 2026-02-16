@@ -1,0 +1,48 @@
+---
+description: "Robin Food Data Model v1.4.11 — 24 tables, DDL, indexes, constraints"
+globs: "**/models/**,**/migrations/**,**/entities/**,**/schemas/**,**/db/**"
+alwaysApply: false
+---
+
+# Data Model v1.4.11 — Quick Reference
+
+Source: `docs/Data_Model_v1.4.11_consolidated.md`
+
+## Tables (24)
+| # | Table | Domain | Key Constraints |
+|---|---|---|---|
+| 1 | appuser | Auth | role ∈ {customer,picker,partner,admin}, status ∈ {invited,active,deleted} |
+| 2 | customerorder | Orders | status 7-enum, paymentProvider ∈ {tinkoff,sbp,yandexsplit,dolyame} |
+| 3 | orderitem | Orders | quantityUnit ∈ {kg,pcs}, status ∈ {active,replaced,cancelled} |
+| 4 | partner | Catalog | inn UNIQUE |
+| 5 | store | Catalog | GiST index on (lat,lon), FTS on (name‖address) |
+| 6 | category | Catalog | FTS GIN index |
+| 7 | product | Catalog | FTS GIN + trigram GIN for search fallback |
+| 8 | productimage | Catalog | sortOrder for carousel |
+| 9 | otpsession | Auth | status ∈ {pending,verified,expired,blocked}, TTL 2 min |
+| 10 | refreshtoken | Auth | pushToken + pushPlatform (v1.4.8), tokenhash SHA-256 UNIQUE |
+| 11 | cart | Cart | customerid UNIQUE (one cart per user) |
+| 12 | cartitem | Cart | UNIQUE(cartid, productid) |
+| 13 | deletionrequest | Profile | 30-day grace |
+| 14 | favorite | Favorites | UNIQUE(userid, entitytype, entityid) |
+| 15 | address | Addresses | max 5 per user |
+| 16 | smartalert | Alerts | max 20 per user |
+| 17 | smartalertlog | Alerts | debounce 24h |
+| 18 | chatmessage | Chat | max 1000 chars |
+| 19 | orderrating | Rating | idempotent upsert, 1–5 |
+| 20 | settlementperiod | Settlement | status ∈ {calculating,review,disputed,approved,paid}, **payoutref** (v1.4.11) |
+| 21 | settlementline | Settlement | status ∈ {pending,disputed,approved} |
+| 22 | settlementadjustment | Settlement | type ∈ {refund,correction,penalty,bonus} |
+| 23 | paymenttransaction | Payment | UNIQUE(provider, providerref) for webhook idempotency |
+| 24 | partnertariff | Settlement | commissionPercent, effective date range |
+
+## Critical Indexes
+- `idx_custorder_customer_status` — order list queries
+- `idx_custorder_payment_status` — settlement pipeline
+- `idx_product_fts` — GIN fulltext search
+- `idx_product_trigram` — GIN trigram fallback
+- `idx_store_location` — GiST ll_to_earth for geo queries
+- `idx_pay_tx_provider_ref(provider, providerref)` UNIQUE — webhook idempotency
+
+## v1.4.11 Delta (from v1.4.10)
+- `settlementperiod.payoutref TEXT` — bank transfer reference (Settlement v1.2.3 sec 10, IC v1.6.5 sec 1.4)

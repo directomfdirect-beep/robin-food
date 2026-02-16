@@ -1,0 +1,21 @@
+name: robin-food-supabase
+
+services:
+  db:
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-6432}:5432"
+
+  studio:
+    ports:
+      - "127.0.0.1:${STUDIO_PORT:-4000}:3000"
+    environment:
+      SUPABASE_PUBLIC_URL: https://robin-food.ru/api
+
+  kong:
+    ports:
+      - "127.0.0.1:${KONG_HTTP_PORT:-9000}:8000"
+
+  auth:
+    environment:
+      API_EXTERNAL_URL: https://robin-food.ru/api
+      GOTRUE_SITE_URL: https://robin-food.ru

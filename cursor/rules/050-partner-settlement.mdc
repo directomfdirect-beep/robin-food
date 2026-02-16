@@ -1,0 +1,38 @@
+---
+description: "Robin Food Settlement v1.2.3 — GMV, commission, disputes, payout"
+globs: "**/settlement/**,**/dispute/**,**/payout/**,**/finance/**"
+alwaysApply: false
+---
+
+# Settlement v1.2.3 — Quick Reference
+
+Source: `docs/Settlement_v1.2.3_consolidated.md`
+
+## Pipeline (CRON daily 03:00 MSK, 3 steps)
+1. **Step 1** — Settlement Job: create period, calculate GMV/commission/payout per partner
+2. **Step 2** — Auto-Approve: approve periods past review deadline (if no unresolved disputes)
+3. **Step 3** — Health Check: domain-specific + cronHealthWrapper
+
+## Key Formulas
+- Item GMV: `kg → finalPrice` (currentPrice × actualQty) / `pcs → finalPrice × requestedQty`
+- Commission: `GMV × tariff.commissionPercent / 100`
+- Payout: `GMV − commission + adjustments`
+- BNPL fee: `finalAmount × provider.feePercent / 100` (Robin Food expense, NOT deducted from partner)
+
+## Dispute Flow (sec 8, aligned with API Contract v1.4.5 sec 11.1)
+- Body: `{ lineIds: [...], reason }` (line-level granularity, NOT orderIds)
+- Re-dispute allowed (disputed → disputed)
+- Response: `{ periodId, status, disputedLinesCount, totalDisputedLines }`
+
+## v1.2.3 Delta — Payout Execution (sec 10 REWRITTEN)
+- `executePayout(periodId)` → calls IC v1.6.5 sec 1.4 bank transfer API
+- On success: `period.status = paid`, `period.payoutref = transferId`, email partner
+- On failure: no status change, alert ops, manual retry
+- DDL: `ALTER TABLE settlementperiod ADD COLUMN payoutref TEXT`
+
+## Period Status State Machine
+```
+calculating → review → approved → paid
+                ↕
+             disputed → approved → paid
+```

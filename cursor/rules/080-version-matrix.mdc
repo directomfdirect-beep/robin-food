@@ -1,0 +1,20 @@
+---
+description: "Robin Food cross-document version matrix — ensures consistency"
+globs:
+alwaysApply: false
+---
+
+# Version Matrix v1.4.5 / v1.2.3 / v1.6.5 (16.02.2026)
+
+| Document | Version | Min Compatible | Key Delta |
+|---|---|---|---|
+| Spec | v1.4.5 | v1.4.3 | API Versioning Policy (sec 2.16), IP whitelist config-driven |
+| API Contract | v1.4.5 | v1.4.3 | VM sync, Appendix F versioning ref |
+| Data Model | v1.4.11 | v1.4.9 | payoutref on settlementperiod |
+| Navigation | v1.4.5 | v1.4.4 | VM IC v1.6.4, cross-ref audit |
+| Integration Contracts | v1.6.5 | v1.6.3 | IP whitelist config-driven, Payout Provider sec 1.4 |
+| BNPL Integration | v1.2.3 | v1.2.2 | VM sync (Nav, IC, Settlement) |
+| Settlement | v1.2.3 | v1.2.2 | Payout Execution rewrite sec 10, payoutref |
+
+## Cross-reference Rule
+When modifying a document, bump its version and update the Version Matrix in ALL 7 documents.

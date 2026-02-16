@@ -1,0 +1,18 @@
+---
+description: "Command: integrate external provider (IC v1.6.5 patterns)"
+globs:
+alwaysApply: false
+---
+
+# /add-provider — Integrate External Provider
+
+## Checklist
+1. **Credentials** — env vars / secrets manager, rotate every 6 months
+2. **Client vs server key** — restrict client keys by bundle/package
+3. **Retry** — exponential backoff ×3 (`1s, 2s, 4s`)
+4. **Fallback** — define per-provider failure action
+5. **Security** — TLS 1.2+, cert pinning for critical providers
+6. **Monitoring** — Sentry + context (orderId, userId, provider)
+7. **Rate limits** — document provider-side limits
+
+## 8 existing providers: Tinkoff, SMSC.ru, FCM, Yandex Geocoding, Yandex Suggest, Yandex Object Storage, Yandex Split, Dolyame

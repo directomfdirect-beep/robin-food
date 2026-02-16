@@ -1,0 +1,31 @@
+---
+description: "Robin Food Integration Contracts v1.6.5 — external providers, push, CRON, payout"
+globs: "**/integrations/**,**/webhooks/**,**/providers/**,**/push/**,**/cron/**,**/jobs/**"
+alwaysApply: false
+---
+
+# Integration Contracts v1.6.5 — Quick Reference
+
+Source: `docs/Integration_Contracts_v1.6.5_consolidated.md`
+
+## External Providers (8)
+| Provider | Use | Auth |
+|---|---|---|
+| Tinkoff Acquiring | Payments (card + SBP) | TerminalKey + HMAC SHA-256 |
+| SMSC.ru | SMS OTP + fallback | login + password |
+| FCM | Push (primary MVP) | Bearer (service account) |
+| Yandex Geocoding | Forward geocoding (server) | API key |
+| Yandex Suggest | Address autocomplete (client) | Restricted API key |
+| Yandex Object Storage | Image hosting (S3) | Access key + secret |
+| Yandex Split | BNPL | Bearer API key |
+| Dolyame | BNPL | Bearer API key |
+
+## v1.6.5 Deltas
+- **sec 1.1**: Tinkoff webhook IP whitelist is now config-driven (`TINKOFF_WEBHOOK_IP_RANGES`), runbook RF-NET-01
+- **sec 1.4 NEW**: Settlement Payout Provider — Bank Transfer via `POST /v1/transfers`, idempotency by periodId, `settlementperiod.payoutref`
+
+## CRON Health (sec 8.6)
+All jobs wrapped in `cronHealthWrapper` → Prometheus metrics + Dead Man's Switch + Sentry
+
+## Push Routing (sec 3)
+`sendPush(userId)` → query `refreshtoken.pushToken` → FCM gateway → on fail → SMS fallback via SMSC.ru

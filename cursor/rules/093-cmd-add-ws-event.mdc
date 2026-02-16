@@ -1,0 +1,23 @@
+---
+description: "Command: add a new WebSocket event (API Contract v1.4.5 sec 12)"
+globs:
+alwaysApply: false
+---
+
+# /add-ws-event — Add WebSocket Event
+
+## Checklist
+1. **Event name** — `domain.action` (e.g. `order.statusChanged`)
+2. **Envelope**: `{ event, timestamp, idempotencyKey, payload }`
+3. **Receiver** — customer, picker, or both
+4. **Trigger** — backend action that fires event
+5. **Client dedup** — by `idempotencyKey`
+6. **Offline queue** — Redis TTL 5min, max 50, overflow → `sync_required`
+7. **Push mirror** — add to IC sec 3.2 if push needed
+
+## Existing Events (5)
+order.statusChanged, order.cancelled, order.totalsUpdated, chat.message, chat.read
+
+## WS Rules
+- Auth: JWT query param, heartbeat 30s/10s, max 3 conn/user
+- Rate: 10 client→server msg/min, close codes: 4001/4003/4008/4029

@@ -1,0 +1,22 @@
+---
+description: "Command: scaffold a new REST endpoint following Robin Food API Contract v1.4.5 patterns"
+globs:
+alwaysApply: false
+---
+
+# /new-endpoint — Scaffold REST Endpoint
+
+Follow API Contract v1.4.5 patterns (61 existing endpoints).
+
+## Checklist
+1. **Method + Path** — `POST /api/v1/{resource}`, kebab-case
+2. **Auth** — Bearer JWT RS256 + role check (customer/picker/partner/admin)
+3. **Request** — camelCase fields, required/optional, validation rules
+4. **Response** — 200/201/204, camelCase, pagination cursor if list
+5. **Errors** — unified `{ code, message, details }`, use Appendix B HTTP codes
+6. **Rate limit** — assign scope from Appendix E
+7. **Idempotency** — if write, define idempotency strategy (upsert / idempotencyKey)
+8. **WS event** — if state change, fire WS event (sec 12)
+9. **Push** — if user-facing, add push trigger (IC v1.6.5 sec 3.2)
+10. **OpenAPI** — add to `openapi.yaml`, update Appendix D count
+11. **Tests** — schemathesis contract test, unit test for processing logic

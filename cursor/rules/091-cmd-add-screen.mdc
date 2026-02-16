@@ -1,0 +1,31 @@
+---
+description: "Command: scaffold a new screen following Robin Food Navigation v1.4.5 patterns"
+globs:
+alwaysApply: false
+---
+
+# /add-screen — Scaffold React Native Screen
+
+Follow Navigation v1.4.5 patterns (29 existing screens).
+
+## Checklist
+1. **Register** in Screen Registry (sec 1) — sequential ID, app, version tag
+2. **Navigation Flow** — assign to parent flow (sec 3)
+3. **Tab Bar** — if top-level, add to tab config + badge logic
+4. **Deep link** — register `robinfood://` route (sec 4), auth-gate redirect
+5. **Push routing** — add to Push → Screen table (sec 9)
+6. **Offline** — Buyer: blocking overlay; Picker: local queue
+7. **Error/Empty states** — add to sec 8 table
+8. **A11y** — WCAG AA: 44×44pt targets, 4.5:1 contrast, accessibilityLabel, formatPrice()
+9. **Transitions** — follow sec 7 animation table (fade 150ms, slide 300ms, modal 250ms)
+10. **Localization** — all strings in resource files, no hardcoded text
+
+## File Structure
+```
+src/screens/{App}/{ScreenName}/
+├── {ScreenName}Screen.tsx
+├── {ScreenName}.hooks.ts
+├── {ScreenName}.types.ts
+├── components/
+└── __tests__/
+```

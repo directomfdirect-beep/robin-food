@@ -1,0 +1,19 @@
+---
+description: "Command: add a new push notification (IC v1.6.5 sec 3)"
+globs:
+alwaysApply: false
+---
+
+# /add-push — Add Push Notification
+
+## Checklist
+1. **Trigger** — backend event name
+2. **Target** — customer, picker, or counterparty
+3. **Payload**: `{ notification: { title, body }, data: { type, orderId, deepLink } }`
+4. **Deep link** — map to `robinfood://` route
+5. **Screen routing** — add to Nav sec 9
+6. **Price formatting** — `formatPrice()` for amounts in body (Spec sec 14.3)
+7. **Chat grouping** — >3 msg/30s → grouped push
+
+## Routing: `sendPush(userId)` → `refreshtoken.pushToken` → FCM → fail → SMS fallback
+## 11 existing triggers: order.statusChanged, order.ready, order.cancelled (×2), picker.newOrder, picker.customerArrived, order.completed, smartalert.fired, chat.message, chat.message.grouped, deletionReminder

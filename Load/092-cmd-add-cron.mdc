@@ -1,0 +1,25 @@
+---
+description: "Command: scaffold a new CRON job with cronHealthWrapper (IC v1.6.5 sec 8.6)"
+globs:
+alwaysApply: false
+---
+
+# /add-cron — Scaffold CRON Job
+
+All CRON jobs MUST be wrapped in `cronHealthWrapper`. No exceptions.
+
+## Checklist
+1. **Job function** — must return `{ processedCount }`
+2. **Wrap**: `cronHealthWrapper("job-name", jobFunction)`
+3. **Thresholds** — add to config: `{ warn, crit, stale }` seconds
+4. **Schedule** — CRON expression (MSK timezone)
+5. **Document** — add to Spec sec 11, IC sec 8
+
+## Existing Jobs
+| Job | Schedule | Warn | Crit | Stale |
+|---|---|---|---|---|
+| holdAutoCancel | every 1 min | 30s | 55s | 3 min |
+| settlementPipeline | daily 03:00 | 5 min | 15 min | 25h |
+| accountDeletion | daily 04:00 | 2 min | 10 min | 25h |
+| smartAlerts | every 30 min | 60s | 120s | 35 min |
+| otpCleanup | every 1 hour | 30s | 60s | 65 min |

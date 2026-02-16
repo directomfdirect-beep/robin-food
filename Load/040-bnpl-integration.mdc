@@ -1,0 +1,30 @@
+---
+description: "Robin Food BNPL Integration v1.2.3 — Yandex Split + Dolyame lifecycle"
+globs: "**/bnpl/**,**/payments/**bnpl**,**/payments/**/split**,**/payments/**/dolyame**"
+alwaysApply: false
+---
+
+# BNPL Integration v1.2.3 — Quick Reference
+
+Source: `docs/BNPL_Integration_v1.2.3_consolidated.md`
+
+## Providers
+| | Yandex Split | Dolyame |
+|---|---|---|
+| minAmount | 500 ₽ (50000 kop) | 500 ₽ (50000 kop) |
+| maxAmount | 1M ₽ | 2M ₽ |
+| Installments | 3, 6 | 4 |
+| Fee (Robin Food) | 5.5% | 6.0% |
+
+## Lifecycle: authorize → capture → [cancel | schedule-sync]
+1. **Authorize** — at `POST /cart/checkout`, per sub-order, minAmount check
+2. **Capture** — at `PUT /picker/orders/:id/complete` (picking→ready), NOT at completed
+3. **Cancel** — BR-BNPL-6: if finalAmount < minAmount → cancel BNPL, status=cancelled
+4. **Schedule Sync** — if finalAmount ≠ originalTotalAmount after capture
+
+## Status Tracking (v1.2.1+)
+- `customerorder.bnplStatus` DROPPED — use `paymenttransaction.type` instead
+- Helper: query latest paymenttransaction WHERE type IN (bnpl_authorize, bnpl_commit, bnpl_cancel)
+
+## v1.2.3 Delta
+- Version Matrix sync only (Nav v1.4.4, IC v1.6.4, Settlement v1.2.2)

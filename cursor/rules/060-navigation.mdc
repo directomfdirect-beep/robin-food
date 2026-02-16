@@ -1,0 +1,35 @@
+---
+description: "Robin Food Navigation v1.4.5 — 29 screens, flows, deep links, a11y"
+globs: "**/screens/**,**/navigation/**,**/components/**,**/deeplinks/**"
+alwaysApply: false
+---
+
+# Navigation v1.4.5 — Quick Reference
+
+Source: `docs/Navigation_v1.4.5_consolidated.md`
+
+## Screen Registry: Buyer (24) + Picker (5) = 29 screens
+- Auth: AuthPhoneScreen, AuthOTPScreen
+- Catalog: HomeScreen, StoreScreen, ProductListScreen, ProductDetailScreen
+- Search: SearchScreen, SearchResultsScreen
+- Cart/Payment: CartScreen, PaymentMethodScreen, OrderConfirmationScreen, PaymentWebView, SBPPaymentSheet
+- Orders: OrderTrackingScreen (3 tabs), OrderDetailScreen, OrderHistoryScreen
+- Profile: ProfileScreen, PaymentMethodsScreen, AddressScreen, AddressEditScreen, SettingsScreen
+- Alerts: SmartAlertsScreen, AlertDetailScreen
+- Favorites: FavoritesScreen
+- Picker: PickerOrderListScreen, PickerOrderDetailScreen, PickerScanScreen, PickerHistoryScreen, PickerProfileScreen
+
+## Tab Bar
+- Buyer: Home | Search | Cart | Favorites | Profile (5 tabs)
+- Picker: Orders | History | Profile (3 tabs)
+
+## Deep Links (6 routes)
+`robinfood://store/:id`, `robinfood://order/:id`, `robinfood://product/:id`,
+`robinfood://order/:id?tab=chat`, `robinfood://orders`, `robinfood://order/:id?action=arrived`
+
+## A11y (WCAG 2.1/2.2 AA)
+- Touch targets ≥ 44×44pt, contrast ≥ 4.5:1, all elements have accessibilityLabel + Hint
+- Amounts in a11y: use formatPrice() per Spec sec 14.3
+
+## v1.4.5 Delta
+- Version Matrix: IC v1.6.3→v1.6.4, cross-ref audit verified
