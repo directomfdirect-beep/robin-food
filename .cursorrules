@@ -1,0 +1,87 @@
+# Robin Food - Cursor Rules
+
+## Project Overview
+Robin Food — мобильное приложение для покупки продуктов со скидками (food waste reduction). React + Vite + Tailwind CSS.
+
+## Tech Stack
+- React 18
+- Vite 5
+- Tailwind CSS 3.4
+- Lucide React (иконки)
+- Leaflet (карты)
+
+## Project Structure
+```
+src/
+├── components/
+│ ├── ui/ # Базовые UI компоненты (Button, Input, Badge)
+│ ├── layout/ # Layout компоненты (Header, BottomNav)
+│ ├── screens/ # Экраны/табы приложения
+│ ├── modals/ # Модальные окна
+│ └── overlays/ # Оверлеи (Settings, Checkout и т.д.)
+├── hooks/ # React хуки (useCart, useFavorites, useMap)
+├── utils/ # Утилиты (price, phone)
+├── data/ # Константы и данные
+└── styles/ # Глобальные стили
+```
+
+## Design System
+
+### Colors
+- `acid` (#BDFF00) - акцентный цвет
+- `brand-green` (#208C80) - брендовый зеленый
+- `error` (#FF5459) - ошибки
+- `gray-bg` (#F5F5F5) - фон
+
+### Typography
+- Все заголовки: `font-black uppercase italic`
+- Мелкий текст: `text-[10px] font-bold uppercase`
+- Goldapple-стиль: `.ga-title`, `.ga-body`, `.ga-label`, `.ga-price`, `.ga-button`
+
+### Border Radius
+- Карточки: `rounded-[32px]` или `rounded-[36px]`
+- Кнопки: `rounded-2xl` или `rounded-3xl`
+- Модалки: `rounded-t-[50px]`
+
+## Coding Conventions
+
+### Imports
+Используй алиасы:
+```js
+import { Button } from '@/components/ui';
+import { useCart } from '@/hooks';
+import { COLORS } from '@/data';
+```
+
+### Components
+- Функциональные компоненты с JSDoc
+- Деструктуризация пропсов
+- Экспорт через index.js
+
+### Naming
+- Компоненты: PascalCase
+- Хуки: camelCase с префиксом `use`
+- Константы: UPPER_SNAKE_CASE
+
+## Key Features
+1. **Корзина**: useCart хук с addItem, removeItem, incrementItem, decrementItem
+2. **Избранное**: useFavorites хук с toggleFavorite
+3. **Карта**: useMap хук с Leaflet интеграцией
+4. **Цены**: calculatePrices() возвращает скидки по времени и опту
+
+## Common Patterns
+
+### Adding new screen
+1. Создай компонент в `src/components/screens/`
+2. Экспортируй из `screens/index.js`
+3. Добавь в App.jsx в renderView или renderHub
+
+### Adding new overlay
+1. Добавь в `src/components/overlays/OverlayScreens.jsx`
+2. Экспортируй из `overlays/index.js`
+3. Добавь case в renderOverlay в App.jsx
+
+## Don't
+- Не используй inline styles (только Tailwind)
+- Не создавай отдельные CSS файлы для компонентов
+- Не используй class components
