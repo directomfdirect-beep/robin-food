@@ -13,6 +13,7 @@ export const SearchResultsScreen = ({
   favorites,
   onToggleFavorite,
   onProductClick,
+  onAddToCart,
   onStoreClick,
   onBack,
 }) => {
@@ -82,6 +83,7 @@ export const SearchResultsScreen = ({
                   isFavorite={favorites?.includes(product.id)}
                   onFavoriteToggle={onToggleFavorite}
                   onClick={onProductClick}
+                  onAddToCart={onAddToCart}
                 />
               ))}
             </div>

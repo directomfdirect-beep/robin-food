@@ -69,6 +69,7 @@ export const FavoritesScreen = ({
                 isFavorite={true}
                 onFavoriteToggle={onToggleFavorite}
                 onClick={onProductClick}
+                onAddToCart={onAddToCart}
               />
             ))}
           </div>

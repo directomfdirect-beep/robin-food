@@ -10,6 +10,7 @@ export const ProductCard = ({
   isFavorite,
   onFavoriteToggle,
   onClick,
+  onAddToCart,
 }) => {
   const priceInfo = calculatePrices(product, 1);
 
@@ -18,6 +19,15 @@ export const ProductCard = ({
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
     onFavoriteToggle(product.id);
+  };
+
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    if (onAddToCart) {
+      onAddToCart(product, 1);
+    }
   };
 
   return (
@@ -81,7 +91,11 @@ export const ProductCard = ({
               ₽{priceInfo.unitPrice}
             </span>
           </div>
-          <button className="bg-black text-acid p-2.5 rounded-xl shadow-lg hover:bg-gray-800 transition-colors">
+          <button
+            onClick={handleAddToCart}
+            onPointerDown={(e) => e.stopPropagation()}
+            className="bg-black text-acid p-2.5 rounded-xl shadow-lg hover:bg-gray-800 transition-colors active:scale-90"
+          >
             <Plus size={16} strokeWidth={2.5} />
           </button>
         </div>

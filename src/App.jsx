@@ -362,6 +362,7 @@ export default function App() {
             favorites={favorites.favorites}
             onToggleFavorite={favorites.toggleFavorite}
             onProductClick={handleProductClick}
+            onAddToCart={handleAddToCart}
             onBack={popScreen}
             onViewAll={() => { popScreen(); handleBrowseAll(); }}
           />
@@ -373,6 +374,7 @@ export default function App() {
             favorites={favorites.favorites}
             onToggleFavorite={favorites.toggleFavorite}
             onProductClick={handleProductClick}
+            onAddToCart={handleAddToCart}
             storeId={screen.storeId}
             shoppingMode={storeSelection.shoppingMode}
             selectedStore={storeSelection.selectedStore}
@@ -405,6 +407,7 @@ export default function App() {
             favorites={favorites.favorites}
             onToggleFavorite={favorites.toggleFavorite}
             onProductClick={handleProductClick}
+            onAddToCart={handleAddToCart}
             onStoreClick={handleSelectStore}
             onBack={popScreen}
           />

@@ -16,6 +16,7 @@ export const CatalogTab = ({
   favorites,
   onToggleFavorite,
   onProductClick,
+  onAddToCart,
   storeId,
   shoppingMode,
   selectedStore,
@@ -187,6 +188,7 @@ export const CatalogTab = ({
               isFavorite={favorites.includes(product.id)}
               onFavoriteToggle={onToggleFavorite}
               onClick={onProductClick}
+              onAddToCart={onAddToCart}
             />
           ))}
         </div>
