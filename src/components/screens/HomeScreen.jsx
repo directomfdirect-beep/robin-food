@@ -73,9 +73,9 @@ export const HomeScreen = ({
         }`}
       />
 
-      {/* Radar controls — shown when no stores found yet */}
+      {/* Radar controls — shown when no stores found yet, above tab bar */}
       {!radarApplied || storesInRadius.length === 0 ? (
-        <div className="absolute bottom-6 left-4 right-4 z-20">
+        <div className="absolute bottom-24 left-4 right-4 z-20">
           <div className="bg-white rounded-3xl shadow-xl p-6 space-y-5">
             <div className="flex justify-between items-center">
               <span className="ga-label text-gray-500">Радиус перехвата</span>

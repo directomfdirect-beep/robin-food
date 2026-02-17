@@ -546,10 +546,18 @@ export default function App() {
                 />
               )}
 
-              {activeTab === 'search' && (
-                <SearchScreen
-                  onSearch={handleSearch}
-                  onCategorySelect={handleCategorySelect}
+              {activeTab === 'catalog' && (
+                <ProductListScreen
+                  favorites={favorites.favorites}
+                  onToggleFavorite={favorites.toggleFavorite}
+                  onProductClick={handleProductClick}
+                  onAddToCart={handleAddToCart}
+                  shoppingMode={storeSelection.shoppingMode}
+                  selectedStore={storeSelection.selectedStore}
+                  storeProducts={storeSelection.storeProducts}
+                  availableProducts={storeSelection.availableProducts}
+                  radarApplied={storeSelection.radarApplied}
+                  storesInRadius={storeSelection.storesInRadius}
                 />
               )}
 
