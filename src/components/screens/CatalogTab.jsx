@@ -3,7 +3,8 @@ import { CategoryFilter } from '@/components/CategoryFilter';
 import { ProductCard } from '@/components/ProductCard';
 import { MASTER_CATALOG } from '@/data/catalog';
 import { catalog as catalogApi } from '@/lib/api';
-import { Search, SlidersHorizontal, Store, MapPin } from 'lucide-react';
+import { calculatePrices } from '@/utils/price';
+import { Search, SlidersHorizontal, Store, MapPin, ShoppingBag } from 'lucide-react';
 
 /**
  * Catalog tab with product grid
@@ -11,6 +12,7 @@ import { Search, SlidersHorizontal, Store, MapPin } from 'lucide-react';
  * - shoppingMode 'single': filters to selectedStore only
  * - shoppingMode 'multi': shows all products from all stores in radius
  * - Falls back to static MASTER_CATALOG when no radar
+ * - Shows per-store cart summary when items are in cart
  */
 export const CatalogTab = ({
   favorites,
@@ -24,6 +26,9 @@ export const CatalogTab = ({
   availableProducts,
   radarApplied,
   storesInRadius,
+  cartItems = [],
+  onIncrementCart,
+  onDecrementCart,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Все');
@@ -86,13 +91,83 @@ export const CatalogTab = ({
     return list;
   }, [productsForTab, apiProducts, selectedCategory, searchQuery]);
 
+  // Per-store cart summary (grouped by storeId, with address)
+  const cartByStore = useMemo(() => {
+    if (!cartItems || cartItems.length === 0) return [];
+    const groups = {};
+    cartItems.forEach((item) => {
+      const sid = item.storeId || 'unknown';
+      if (!groups[sid]) {
+        groups[sid] = {
+          storeId: sid,
+          storeName: item.storeName || 'Магазин',
+          storeAddress: item.storeAddress || '',
+          storeIcon: item.storeIcon || item.icon || null,
+          count: 0,
+          total: 0,
+        };
+      }
+      groups[sid].count += item.qty;
+      groups[sid].total += calculatePrices(item, item.qty).totalPrice;
+    });
+    return Object.values(groups);
+  }, [cartItems]);
+
+  // Helper: find cart item for a product
+  const getCartItem = useCallback(
+    (product) => {
+      if (!cartItems) return null;
+      return cartItems.find(
+        (ci) => ci.id === product.id && ci.storeId === product.storeId
+      ) || null;
+    },
+    [cartItems]
+  );
+
   return (
     <div className="p-6 animate-fade-in">
+      {/* Per-store cart summary */}
+      {cartByStore.length > 0 && (
+        <div className="space-y-2 mb-4">
+          {cartByStore.map((group) => (
+            <div
+              key={group.storeId}
+              className="bg-acid/10 border border-acid/30 rounded-2xl p-3 flex items-center gap-3"
+            >
+              <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden p-1">
+                {group.storeIcon ? (
+                  <img src={group.storeIcon} alt={group.storeName} className="w-full h-full object-contain" />
+                ) : (
+                  <ShoppingBag size={16} className="text-brand-green" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-xs truncate">
+                  {group.storeName}{group.storeAddress ? ` · ${group.storeAddress}` : ''}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-[10px] font-bold text-gray-500 bg-white px-2 py-1 rounded-lg">
+                  {group.count} шт
+                </span>
+                <span className="text-sm font-bold text-black">
+                  ₽{Math.round(group.total)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Single-store banner */}
       {shoppingMode === 'single' && selectedStore && (
         <div className="bg-brand-green/10 rounded-2xl p-4 mb-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-brand-green/20 rounded-xl flex items-center justify-center">
-            <Store size={20} className="text-brand-green" />
+          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center overflow-hidden p-1.5 flex-shrink-0">
+            {selectedStore.icon ? (
+              <img src={selectedStore.icon} alt={selectedStore.name} className="w-full h-full object-contain" />
+            ) : (
+              <Store size={20} className="text-brand-green" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-bold text-sm truncate">{selectedStore.name}</p>
@@ -128,8 +203,12 @@ export const CatalogTab = ({
                     : 'bg-gray-100 text-gray-500'
                 }`}
               >
-                <MapPin size={12} />
-                {store.name} ({(storeProducts?.[store.id] || []).length})
+                {store.icon ? (
+                  <img src={store.icon} alt="" className="w-3.5 h-3.5 object-contain" />
+                ) : (
+                  <MapPin size={12} />
+                )}
+                {store.name} · {store.address} ({(storeProducts?.[store.id] || []).length})
               </button>
             ))}
           </div>
@@ -189,6 +268,9 @@ export const CatalogTab = ({
               onFavoriteToggle={onToggleFavorite}
               onClick={onProductClick}
               onAddToCart={onAddToCart}
+              cartItem={getCartItem(product)}
+              onIncrement={onIncrementCart}
+              onDecrement={onDecrementCart}
             />
           ))}
         </div>

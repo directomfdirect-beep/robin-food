@@ -115,12 +115,14 @@ export const useStoreSelection = () => {
       const storeIndex = index % stores.length;
       const store = stores[storeIndex];
       
-      // Create product copy with store info
+      // Create product copy with store info (including chain icon)
       const productWithStore = {
         ...product,
         storeId: store.id,
         storeName: store.name,
         storeAddress: store.address,
+        storeIcon: store.icon || '/chains/magnit.png',
+        storeChain: store.chain || 'magnit',
       };
       
       distribution[store.id].push(productWithStore);

@@ -13,6 +13,9 @@ export { CartTab as CartScreen } from './CartTab';
 export { FavoritesScreen } from './FavoritesScreen';
 export { ProfileTab as ProfileScreen } from './ProfileTab';
 
+// Category browser
+export { CategoryBrowserScreen } from './CategoryBrowserScreen';
+
 // Push screens
 export { StoreScreen } from './StoreScreen';
 export { CatalogTab as ProductListScreen } from './CatalogTab';

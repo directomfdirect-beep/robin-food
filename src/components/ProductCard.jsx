@@ -1,9 +1,10 @@
 import React from 'react';
-import { Heart, Plus, Star } from 'lucide-react';
+import { Heart, Plus, Minus, Star } from 'lucide-react';
 import { calculatePrices } from '@/utils/price';
 
 /**
  * Product card for catalog grid - Goldapple style
+ * Shows +/- quantity controls when item is already in cart
  */
 export const ProductCard = ({
   product,
@@ -11,8 +12,12 @@ export const ProductCard = ({
   onFavoriteToggle,
   onClick,
   onAddToCart,
+  cartItem,
+  onIncrement,
+  onDecrement,
 }) => {
   const priceInfo = calculatePrices(product, 1);
+  const inCart = cartItem && cartItem.qty > 0;
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
@@ -27,6 +32,24 @@ export const ProductCard = ({
     e.nativeEvent.stopImmediatePropagation();
     if (onAddToCart) {
       onAddToCart(product, 1);
+    }
+  };
+
+  const handleIncrement = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    if (onIncrement) {
+      onIncrement(product.id, product.storeId);
+    }
+  };
+
+  const handleDecrement = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    if (onDecrement) {
+      onDecrement(product.id, product.storeId);
     }
   };
 
@@ -63,6 +86,13 @@ export const ProductCard = ({
         >
           <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
         </button>
+
+        {/* In-cart badge on image */}
+        {inCart && (
+          <div className="absolute bottom-3 left-3 bg-acid text-black px-2.5 py-1 rounded-xl text-[10px] font-bold shadow-md">
+            В корзине: {cartItem.qty}
+          </div>
+        )}
       </div>
 
       {/* Info - Goldapple style */}
@@ -91,13 +121,37 @@ export const ProductCard = ({
               ₽{priceInfo.unitPrice}
             </span>
           </div>
-          <button
-            onClick={handleAddToCart}
-            onPointerDown={(e) => e.stopPropagation()}
-            className="bg-black text-acid p-2.5 rounded-xl shadow-lg hover:bg-gray-800 transition-colors active:scale-90"
-          >
-            <Plus size={16} strokeWidth={2.5} />
-          </button>
+
+          {/* Cart controls: +/- counter when in cart, single + button otherwise */}
+          {inCart ? (
+            <div className="flex items-center gap-0 bg-acid rounded-xl overflow-hidden shadow-lg">
+              <button
+                onClick={handleDecrement}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="p-2 hover:bg-acid/80 transition-colors active:scale-90"
+              >
+                <Minus size={14} strokeWidth={2.5} className="text-black" />
+              </button>
+              <span className="text-sm font-bold text-black min-w-[24px] text-center">
+                {cartItem.qty}
+              </span>
+              <button
+                onClick={handleIncrement}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="p-2 hover:bg-acid/80 transition-colors active:scale-90"
+              >
+                <Plus size={14} strokeWidth={2.5} className="text-black" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={handleAddToCart}
+              onPointerDown={(e) => e.stopPropagation()}
+              className="bg-black text-acid p-2.5 rounded-xl shadow-lg hover:bg-gray-800 transition-colors active:scale-90"
+            >
+              <Plus size={16} strokeWidth={2.5} />
+            </button>
+          )}
         </div>
       </div>
     </div>

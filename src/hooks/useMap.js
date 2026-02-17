@@ -74,9 +74,25 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
     });
   }, []);
 
+  // Create a Leaflet divIcon for a specific store chain
+  const createStoreIcon = useCallback((store) => {
+    if (!window.L) return null;
+    const iconSrc = store.icon || '/chains/magnit.png';
+    return window.L.divIcon({
+      className: 'uber-store-marker',
+      html: `
+        <div class="uber-store-dot">
+          <img src="${iconSrc}" alt="" />
+        </div>
+      `,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+    });
+  }, []);
+
   // Update store markers based on radius and center
-  const updateStoreMarkers = useCallback((map, icon, radiusKm, centerCoords) => {
-    if (!map || !icon) return;
+  const updateStoreMarkers = useCallback((map, _icon, radiusKm, centerCoords) => {
+    if (!map) return;
 
     storeMarkersRef.current.forEach(marker => {
       map.removeLayer(marker);
@@ -90,8 +106,11 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
       );
 
       if (distance <= radiusKm) {
+        const storeIcon = createStoreIcon(store);
+        if (!storeIcon) return;
+
         const marker = window.L.marker([store.lat, store.lng], {
-          icon: icon,
+          icon: storeIcon,
         })
           .addTo(map)
           .bindPopup(`
@@ -105,7 +124,7 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
         storeMarkersRef.current.push(marker);
       }
     });
-  }, []);
+  }, [createStoreIcon]);
 
   // Initialize map
   const initMap = useCallback(async (containerId, initialRadius, initialCenter) => {
@@ -182,20 +201,10 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
       .bindPopup('<div style="font-family: system-ui; font-weight: 500;">Мое местоположение</div>');
     userMarkerRef.current = userMarker;
 
-    // Minimalist store icon
-    const storeIcon = L.divIcon({
-      className: 'uber-store-marker',
-      html: `
-        <div class="uber-store-dot">
-          <img src="/magnit-logo.png" alt="" />
-        </div>
-      `,
-      iconSize: [36, 36],
-      iconAnchor: [18, 18],
-    });
-    magnitIconRef.current = storeIcon;
+    // Store icon ref (per-store icons created in updateStoreMarkers)
+    magnitIconRef.current = true;
 
-    updateStoreMarkers(map, storeIcon, initialRadius, initialCenter);
+    updateStoreMarkers(map, null, initialRadius, initialCenter);
 
     mapRef.current = map;
   }, [loadLeaflet, updateStoreMarkers]);

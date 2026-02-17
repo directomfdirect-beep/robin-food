@@ -2,6 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { ShoppingBag, Tag, X, Loader2, ArrowLeft, MapPin } from 'lucide-react';
 import { CartItem } from '@/components/CartItem';
 import { Button } from '@/components/ui/Button';
+import { calculatePrices } from '@/utils/price';
 
 /**
  * Cart tab with items, promo code, and checkout
@@ -26,21 +27,24 @@ export const CartTab = ({
   const isEmpty = items.length === 0;
   const isMultiStore = shoppingMode === 'multi';
 
-  // Group items by store for multi-store mode
+  // Group items by store for multi-store mode (with icon + subtotal)
   const groupedItems = useMemo(() => {
     if (!isMultiStore) return null;
     const groups = {};
     items.forEach((item) => {
-      const storeId = item.storeId || 'unknown';
-      if (!groups[storeId]) {
-        groups[storeId] = {
-          storeId,
+      const sid = item.storeId || 'unknown';
+      if (!groups[sid]) {
+        groups[sid] = {
+          storeId: sid,
           storeName: item.storeName || 'Магазин',
           storeAddress: item.storeAddress || '',
+          storeIcon: item.storeIcon || item.icon || null,
           items: [],
+          subtotal: 0,
         };
       }
-      groups[storeId].items.push(item);
+      groups[sid].items.push(item);
+      groups[sid].subtotal += calculatePrices(item, item.qty).totalPrice;
     });
     return Object.values(groups);
   }, [items, isMultiStore]);
@@ -117,22 +121,36 @@ export const CartTab = ({
         <div className="p-4 space-y-4">
           {/* Items — grouped by store in multi mode, flat list otherwise */}
           {isMultiStore && groupedItems ? (
-            groupedItems.map((group) => (
-              <div key={group.storeId} className="space-y-3">
-                {/* Store header */}
-                <div className="flex items-center gap-2 px-1 pt-2">
-                  <div className="w-8 h-8 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                    <MapPin size={16} className="text-brand-green" />
+            groupedItems.map((group, gIdx) => (
+              <div key={group.storeId}>
+                {/* Divider between groups */}
+                {gIdx > 0 && <div className="border-t border-gray-200 my-4" />}
+
+                {/* Store header with icon and subtotal */}
+                <div className="bg-white rounded-2xl p-4 mb-3 border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden p-1.5">
+                      {group.storeIcon ? (
+                        <img src={group.storeIcon} alt={group.storeName} className="w-full h-full object-contain" />
+                      ) : (
+                        <MapPin size={18} className="text-brand-green" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">{group.storeName}</p>
+                      <p className="text-[10px] text-gray-400 truncate">{group.storeAddress}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-sm font-bold text-black">₽{Math.round(group.subtotal)}</p>
+                      <p className="text-[10px] text-gray-400">{group.items.length} шт</p>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm truncate">{group.storeName}</p>
-                    <p className="text-[10px] text-gray-400 truncate">{group.storeAddress}</p>
-                  </div>
-                  <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">
-                    {group.items.length} шт
-                  </span>
                 </div>
-                {group.items.map(renderCartItem)}
+
+                {/* Items for this store */}
+                <div className="space-y-3">
+                  {group.items.map(renderCartItem)}
+                </div>
               </div>
             ))
           ) : (

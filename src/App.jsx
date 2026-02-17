@@ -33,6 +33,7 @@ import {
   AddressEditScreen,
   SmartAlertsScreen,
   AlertDetailScreen,
+  CategoryBrowserScreen,
 } from '@/components/screens';
 
 // Layout
@@ -186,6 +187,13 @@ export default function App() {
   const handleCategorySelect = useCallback(
     (category) => {
       pushScreen({ type: 'searchResults', query: category });
+    },
+    [pushScreen]
+  );
+
+  const handleSubcategorySelect = useCallback(
+    (subcategory) => {
+      pushScreen({ type: 'searchResults', query: subcategory.productCategory });
     },
     [pushScreen]
   );
@@ -543,21 +551,22 @@ export default function App() {
                   storesInRadius={storeSelection.storesInRadius}
                   storeProducts={storeSelection.storeProducts}
                   radarApplied={storeSelection.radarApplied}
-                />
-              )}
-
-              {activeTab === 'catalog' && (
-                <ProductListScreen
                   favorites={favorites.favorites}
                   onToggleFavorite={favorites.toggleFavorite}
                   onProductClick={handleProductClick}
                   onAddToCart={handleAddToCart}
                   shoppingMode={storeSelection.shoppingMode}
                   selectedStore={storeSelection.selectedStore}
-                  storeProducts={storeSelection.storeProducts}
                   availableProducts={storeSelection.availableProducts}
-                  radarApplied={storeSelection.radarApplied}
-                  storesInRadius={storeSelection.storesInRadius}
+                  cartItems={cart.items}
+                  onIncrementCart={cart.incrementItem}
+                  onDecrementCart={cart.decrementItem}
+                />
+              )}
+
+              {activeTab === 'categories' && (
+                <CategoryBrowserScreen
+                  onCategorySelect={handleSubcategorySelect}
                 />
               )}
 

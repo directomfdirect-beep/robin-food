@@ -2,8 +2,8 @@ import React from 'react';
 import { Radar, LayoutGrid, ShoppingBag, Heart, User } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { id: 'home', icon: Radar, label: 'Радар' },
-  { id: 'catalog', icon: LayoutGrid, label: 'Каталог' },
+  { id: 'home', icon: Radar, label: 'Каталог' },
+  { id: 'categories', icon: LayoutGrid, label: 'Разделы' },
   { id: 'cart', icon: ShoppingBag, label: 'Корзина' },
   { id: 'favorites', icon: Heart, label: 'Избранное' },
   { id: 'profile', icon: User, label: 'Профиль' },
