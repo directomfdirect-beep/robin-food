@@ -78,7 +78,7 @@ const CardInput = ({
           focus:outline-none focus:ring-0
           ${error
             ? 'border-error focus:border-error'
-            : 'border-gray-100 focus:border-brand-green'
+            : 'border-gray-100 focus:border-black'
           }
         `}
       />
@@ -234,8 +234,8 @@ export const CardBindingScreen = ({ onBack, onSuccess, onSkip }) => {
       <div className="flex-1 p-6 space-y-6 overflow-y-auto">
         {/* Title */}
         <div className="text-center pt-4">
-          <div className="w-16 h-16 bg-brand-green/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
-            <CreditCard size={32} className="text-brand-green" />
+          <div className="w-16 h-16 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+            <CreditCard size={32} className="text-black" />
           </div>
           <h2 className="ga-title text-xl">Добавьте способ оплаты</h2>
           <p className="ga-body text-sm text-gray-400 mt-2">
@@ -314,7 +314,7 @@ export const CardBindingScreen = ({ onBack, onSuccess, onSkip }) => {
         <label className="flex items-center gap-3 p-4 bg-white rounded-2xl border border-gray-100 cursor-pointer">
           <div
             className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
-              saveCard ? 'bg-brand-green' : 'bg-gray-200'
+              saveCard ? 'bg-black' : 'bg-gray-200'
             }`}
           >
             {saveCard && <Check size={14} className="text-white" />}
@@ -345,7 +345,7 @@ export const CardBindingScreen = ({ onBack, onSuccess, onSkip }) => {
 
         <button
           onClick={handleSkip}
-          className="w-full text-center py-3 ga-body-medium text-sm text-brand-green hover:text-brand-green/80 transition-colors"
+          className="w-full text-center py-3 ga-body-medium text-sm text-black hover:text-black/80 transition-colors"
         >
           Пропустить (без карты)
         </button>

@@ -92,11 +92,11 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
           {/* Header */}
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-brand-green/10 rounded-2xl flex items-center justify-center">
-                <Zap size={22} className="text-brand-green" />
+              <div className="w-10 h-10 bg-gray-100 rounded-2xl flex items-center justify-center">
+                <Zap size={22} className="text-black" />
               </div>
               <div>
-                <h2 className="font-black italic uppercase text-xl leading-tight">Автовыкуп</h2>
+                <h2 className="ga-title text-[22px] leading-tight">Автовыкуп</h2>
                 <p className="text-xs text-gray-400">Подпишитесь на товары</p>
               </div>
             </div>
@@ -114,7 +114,7 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
             <button
               onClick={() => setEnabled(!enabled)}
               className={`w-12 h-7 rounded-full transition-colors relative ${
-                enabled ? 'bg-brand-green' : 'bg-gray-300'
+                enabled ? 'bg-black' : 'bg-gray-300'
               }`}
             >
               <div
@@ -139,7 +139,7 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
                       onClick={() => setDiscountThreshold(option.value)}
                       className={`p-3 rounded-xl text-center transition-all ${
                         discountThreshold === option.value
-                          ? 'bg-brand-green text-white'
+                          ? 'bg-black text-white'
                           : 'bg-gray-50 text-gray-500 border border-gray-100 hover:bg-gray-100'
                       }`}
                     >
@@ -169,25 +169,25 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
                         onClick={() => setFrequency(option.value)}
                         className={`w-full p-3 rounded-2xl flex items-center gap-3 transition-all ${
                           isSelected
-                            ? 'bg-brand-green/[0.08] border-[1.5px] border-brand-green'
+                            ? 'bg-black/[0.08] border-[1.5px] border-black'
                             : 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
                         }`}
                       >
                         <div
                           className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                            isSelected ? 'bg-brand-green/20' : 'bg-white'
+                            isSelected ? 'bg-acid/20' : 'bg-white'
                           }`}
                         >
                           <Icon
                             size={20}
-                            className={isSelected ? 'text-brand-green' : 'text-gray-400'}
+                            className={isSelected ? 'text-black' : 'text-gray-400'}
                           />
                         </div>
                         <div className="flex-1 text-left">
                           <p className="font-bold text-sm">{option.label}</p>
                           <p className="text-[10px] text-gray-400">{option.description}</p>
                         </div>
-                        {isSelected && <Check size={20} className="text-brand-green" />}
+                        {isSelected && <Check size={20} className="text-black" />}
                       </button>
                     );
                   })}
@@ -200,7 +200,7 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
                   <p className="text-[10px] font-bold uppercase text-gray-400">
                     Товары для автовыкупа
                   </p>
-                  <button onClick={toggleAll} className="text-xs font-bold text-brand-green">
+                  <button onClick={toggleAll} className="text-xs font-bold text-black">
                     {allSelected ? 'Снять все' : 'Выбрать все'}
                   </button>
                 </div>
@@ -220,13 +220,13 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
                               onClick={() => toggleItem(itemKey)}
                               className={`w-full p-2 rounded-xl flex items-center gap-3 transition-all ${
                                 isSelected
-                                  ? 'bg-white border-[1.5px] border-brand-green'
+                                  ? 'bg-white border-[1.5px] border-black'
                                   : 'bg-white border border-transparent'
                               }`}
                             >
                               <div
                                 className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 ${
-                                  isSelected ? 'bg-brand-green' : 'bg-gray-200'
+                                  isSelected ? 'bg-black' : 'bg-gray-200'
                                 }`}
                               >
                                 {isSelected && <Check size={12} className="text-white" />}
@@ -250,7 +250,7 @@ export const AutoPurchaseModal = ({ cartItems = [], onConfirm, onSkip, onClose }
               </div>
 
               {selectedItems.length > 0 && (
-                <div className="bg-brand-green/10 rounded-2xl p-4 mb-4">
+                <div className="bg-gray-100 rounded-2xl p-4 mb-4">
                   <p className="font-bold text-sm mb-0.5">
                     Подписка на {selectedItems.length}{' '}
                     {selectedItems.length === 1 ? 'товар' : 'товаров'}

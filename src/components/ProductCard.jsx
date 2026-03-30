@@ -1,10 +1,10 @@
-import React from 'react';
-import { Heart, Plus, Minus, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Heart, Plus, Minus, Clock } from 'lucide-react';
 import { calculatePrices } from '@/utils/price';
+import { useCountdown } from '@/hooks/useCountdown';
 
 /**
- * Product card for catalog grid - Goldapple style
- * Shows +/- quantity controls when item is already in cart
+ * Product card — editorial black/acid style with spring animations
  */
 export const ProductCard = ({
   product,
@@ -18,6 +18,7 @@ export const ProductCard = ({
 }) => {
   const priceInfo = calculatePrices(product, 1);
   const inCart = cartItem && cartItem.qty > 0;
+  const countdown = useCountdown(product.discountExpiresAt);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
@@ -30,130 +31,136 @@ export const ProductCard = ({
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    if (onAddToCart) {
-      onAddToCart(product, 1);
-    }
+    if (onAddToCart) onAddToCart(product, 1);
   };
 
   const handleIncrement = (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    if (onIncrement) {
-      onIncrement(product.id, product.storeId);
-    }
+    if (onIncrement) onIncrement(product.id, product.storeId);
   };
 
   const handleDecrement = (e) => {
     e.preventDefault();
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    if (onDecrement) {
-      onDecrement(product.id, product.storeId);
-    }
+    if (onDecrement) onDecrement(product.id, product.storeId);
   };
 
   return (
-    <div
+    <motion.div
       onClick={() => onClick(product)}
-      className="flex flex-col gap-3 group active:scale-95 transition-transform text-black cursor-pointer"
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+      className="flex flex-col gap-2 cursor-pointer"
     >
-      {/* Image */}
-      <div className="aspect-[3/4] rounded-[32px] overflow-hidden bg-gray-50 relative border border-gray-100 shadow-sm">
+      {/* Image container */}
+      <div className="aspect-[3/4] rounded-[28px] overflow-hidden bg-gray-50 relative">
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain"
           loading="lazy"
         />
-        
-        {/* Discount badge */}
-        <div className="absolute top-0 left-0 bg-black text-acid px-3 py-1.5 text-[11px] ga-button rounded-br-2xl rounded-tl-[32px]">
+
+        {/* Acid discount badge — Russo One */}
+        <div className="absolute top-0 left-0 bg-acid text-black px-3 py-1.5 ga-price text-[15px] leading-none rounded-br-2xl rounded-tl-[28px]">
           -{priceInfo.discountPercent}%
         </div>
 
-        {/* Favorite button */}
-        <button
+        {/* Urgent timer */}
+        {countdown && countdown.isUrgent && !countdown.expired && (
+          <div className="absolute bottom-2.5 right-2.5 bg-error text-white px-2 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 animate-pulse">
+            <Clock size={9} />
+            {countdown.minutes}:{String(countdown.seconds).padStart(2, '0')}
+          </div>
+        )}
+
+        {/* Favorite */}
+        <motion.button
           onClick={handleFavoriteClick}
           onPointerDown={(e) => e.stopPropagation()}
+          whileTap={{ scale: 0.85 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 25 }}
           className={`
-            absolute top-3 right-3 z-20 p-2.5 rounded-full backdrop-blur-md transition-all
-            ${isFavorite 
-              ? 'bg-error text-white scale-110 shadow-lg' 
-              : 'bg-white/30 text-white'
-            }
+            absolute top-2.5 right-2.5 z-20 p-2 rounded-full transition-colors
+            ${isFavorite ? 'bg-black text-acid' : 'bg-white/50 text-black backdrop-blur-sm'}
           `}
         >
-          <Heart size={18} fill={isFavorite ? 'currentColor' : 'none'} />
-        </button>
+          <Heart size={16} fill={isFavorite ? 'currentColor' : 'none'} />
+        </motion.button>
 
-        {/* In-cart badge on image */}
+        {/* In-cart badge */}
         {inCart && (
-          <div className="absolute bottom-3 left-3 bg-acid text-black px-2.5 py-1 rounded-xl text-[10px] font-bold shadow-md">
-            В корзине: {cartItem.qty}
+          <div className="absolute bottom-2.5 left-2.5 bg-black text-acid px-2 py-1 rounded-xl text-[9px] ga-button">
+            ×{cartItem.qty}
           </div>
         )}
       </div>
 
-      {/* Info - Goldapple style */}
-      <div className="px-1">
-        <h3 className="ga-body-medium text-xs text-gray-800 line-clamp-2 leading-snug min-h-[32px]">
+      {/* Info */}
+      <div className="px-0.5">
+        <p className="ga-body text-[11px] text-gray-700 line-clamp-2 leading-snug min-h-[30px]">
           {product.title}
-        </h3>
-        
-        {/* Rating */}
-        <div className="flex items-center gap-1.5 mt-1">
-          <Star size={12} className="text-orange-400 fill-orange-400" />
-          <span className="ga-body text-[10px] text-gray-500">
-            {product.rating}
-            {product.reviewsCount && (
-              <span className="text-gray-400"> ({product.reviewsCount})</span>
-            )}
-          </span>
-        </div>
+        </p>
+
+        {/* Countdown */}
+        {countdown && !countdown.expired && !countdown.isUrgent && (
+          <div className="flex items-center gap-1 mt-1">
+            <Clock size={9} className="text-gray-400" />
+            <span className="text-[9px] font-semibold text-gray-400">
+              {countdown.hours > 0 ? `${countdown.hours}ч` : `${countdown.minutes}мин`}
+            </span>
+          </div>
+        )}
 
         <div className="flex items-end justify-between mt-1.5">
           <div>
-            <span className="ga-price-old text-[11px] text-gray-400 block">
+            <span className="ga-price-old text-[10px] block">
               ₽{product.basePrice}
             </span>
-            <span className="ga-price text-lg text-black leading-none block">
+            <span className="ga-price text-[22px] text-black leading-none block">
               ₽{priceInfo.unitPrice}
             </span>
           </div>
 
-          {/* Cart controls: +/- counter when in cart, single + button otherwise */}
+          {/* Cart controls */}
           {inCart ? (
-            <div className="flex items-center gap-0 bg-acid rounded-xl overflow-hidden shadow-lg">
-              <button
+            <div className="flex items-center bg-black rounded-xl overflow-hidden">
+              <motion.button
                 onClick={handleDecrement}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="p-2 hover:bg-acid/80 transition-colors active:scale-90"
+                whileTap={{ scale: 0.85 }}
+                className="p-2 text-acid"
               >
-                <Minus size={14} strokeWidth={2.5} className="text-black" />
-              </button>
-              <span className="text-sm font-bold text-black min-w-[24px] text-center">
+                <Minus size={13} strokeWidth={2.5} />
+              </motion.button>
+              <span className="ga-price text-[13px] text-acid min-w-[20px] text-center">
                 {cartItem.qty}
               </span>
-              <button
+              <motion.button
                 onClick={handleIncrement}
                 onPointerDown={(e) => e.stopPropagation()}
-                className="p-2 hover:bg-acid/80 transition-colors active:scale-90"
+                whileTap={{ scale: 0.85 }}
+                className="p-2 text-acid"
               >
-                <Plus size={14} strokeWidth={2.5} className="text-black" />
-              </button>
+                <Plus size={13} strokeWidth={2.5} />
+              </motion.button>
             </div>
           ) : (
-            <button
+            <motion.button
               onClick={handleAddToCart}
               onPointerDown={(e) => e.stopPropagation()}
-              className="bg-black text-acid p-2.5 rounded-xl shadow-lg hover:bg-gray-800 transition-colors active:scale-90"
+              whileTap={{ scale: 0.85 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+              className="bg-black text-acid p-2.5 rounded-xl"
             >
-              <Plus size={16} strokeWidth={2.5} />
-            </button>
+              <Plus size={15} strokeWidth={2.5} />
+            </motion.button>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

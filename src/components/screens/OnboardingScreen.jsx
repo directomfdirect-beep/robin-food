@@ -1,29 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { ONBOARDING_DATA } from '@/data/constants';
 import { Button } from '@/components/ui/Button';
 
 /**
- * Onboarding slides screen
+ * Onboarding slides screen with swipe gesture support
+ * @param {Array} slides - Optional override for slide data (from admin config)
  */
-export const OnboardingScreen = ({ onComplete, onSkip }) => {
+export const OnboardingScreen = ({ onComplete, onSkip, slides }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const touchStartX = useRef(null);
+
+  const slideData = slides && slides.length > 0 ? slides : ONBOARDING_DATA;
 
   const handleNext = () => {
-    if (currentSlide < ONBOARDING_DATA.length - 1) {
+    if (currentSlide < slideData.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
       onComplete();
     }
   };
 
-  const slide = ONBOARDING_DATA[currentSlide];
-  const isLastSlide = currentSlide === ONBOARDING_DATA.length - 1;
+  const handlePrev = () => {
+    if (currentSlide > 0) setCurrentSlide(currentSlide - 1);
+  };
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) handleNext();
+      else handlePrev();
+    }
+    touchStartX.current = null;
+  };
+
+  const slide = slideData[currentSlide];
+  const isLastSlide = currentSlide === slideData.length - 1;
 
   return (
-    <div className="fixed inset-0 bg-white flex flex-col overflow-hidden z-[4000] animate-slide-in-bottom">
+    <div
+      className="fixed inset-0 bg-white flex flex-col overflow-hidden z-[4000] animate-slide-in-bottom"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Image section */}
-      <div className="relative h-[65%] w-full">
+      <div className="relative flex-none" style={{ height: '55%' }}>
         <img
           src={slide.image}
           alt="onboarding"
@@ -43,9 +69,9 @@ export const OnboardingScreen = ({ onComplete, onSkip }) => {
       </div>
 
       {/* Content section */}
-      <div className="flex-1 bg-white px-10 py-8 flex flex-col justify-between relative z-10 -mt-16 rounded-t-[50px] shadow-2xl">
+      <div className="flex-1 bg-white px-10 py-8 flex flex-col justify-between relative z-10 -mt-12 rounded-t-[50px] shadow-2xl">
         <div className="space-y-4">
-          <h2 className="text-[32px] font-black uppercase italic leading-tight">
+        <h2 className="ga-title text-[36px] leading-tight">
             {slide.title}
           </h2>
           <p className="text-gray-400 text-base leading-snug">
@@ -54,11 +80,12 @@ export const OnboardingScreen = ({ onComplete, onSkip }) => {
         </div>
 
         <div className="flex flex-col gap-6 items-center pb-8">
-          {/* Dots indicator */}
+          {/* Dots indicator — tap to navigate */}
           <div className="flex gap-2">
-            {ONBOARDING_DATA.map((_, index) => (
-              <div
+            {slideData.map((_, index) => (
+              <button
                 key={index}
+                onClick={() => setCurrentSlide(index)}
                 className={`
                   h-1.5 rounded-full transition-all duration-300
                   ${currentSlide === index ? 'w-8 bg-acid' : 'w-2 bg-gray-100'}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { CATEGORY_SECTIONS } from '@/data/categories';
 import { Search } from 'lucide-react';
 
@@ -7,9 +7,7 @@ import { Search } from 'lucide-react';
  * Shows hierarchical sections with subcategory cards featuring large emoji.
  * Tapping a subcategory navigates to filtered product list.
  */
-export const CategoryBrowserScreen = ({ onCategorySelect }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-
+export const CategoryBrowserScreen = ({ onCategorySelect, searchQuery = '' }) => {
   const filteredSections = useMemo(() => {
     if (!searchQuery.trim()) return CATEGORY_SECTIONS;
 
@@ -26,23 +24,6 @@ export const CategoryBrowserScreen = ({ onCategorySelect }) => {
 
   return (
     <div className="pb-28 animate-fade-in">
-      {/* Search bar */}
-      <div className="sticky top-0 z-20 bg-white px-4 pt-4 pb-3">
-        <div className="relative">
-          <Search
-            size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-300"
-          />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск по товарам"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-2xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
-          />
-        </div>
-      </div>
-
       {/* Category sections */}
       <div className="px-4 space-y-8 mt-2">
         {filteredSections.map((section) => (

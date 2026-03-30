@@ -138,7 +138,7 @@ export const ProductModal = ({ product, onClose, onAddToCart, onViewReviews }) =
                   <span className="ga-price text-sm">{product.rating}</span>
                 </div>
                 {product.reviewsCount && (
-                  <span className="ga-body text-xs text-brand-green underline">
+                  <span className="ga-body text-xs text-black underline">
                     {product.reviewsCount} отзывов →
                   </span>
                 )}
@@ -148,7 +148,7 @@ export const ProductModal = ({ product, onClose, onAddToCart, onViewReviews }) =
               <span className="ga-price-old text-sm text-gray-400 block">
                 ₽{(product.basePrice * quantity).toFixed(0)}
               </span>
-              <span className="ga-price text-4xl text-brand-green">
+              <span className="ga-price text-4xl text-black">
                 ₽{priceInfo.totalPrice}
               </span>
             </div>
@@ -181,7 +181,7 @@ export const ProductModal = ({ product, onClose, onAddToCart, onViewReviews }) =
             {shouldTruncate && (
               <button
                 onClick={() => setShowFullDescription(!showFullDescription)}
-                className="ga-body-medium text-sm text-brand-green mt-2 hover:underline"
+                className="ga-body-medium text-sm text-black mt-2 hover:underline"
               >
                 {showFullDescription ? 'Скрыть' : 'Показать полностью'}
               </button>
@@ -198,7 +198,7 @@ export const ProductModal = ({ product, onClose, onAddToCart, onViewReviews }) =
             </div>
             <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-brand-green to-emerald-400 transition-all duration-500"
+                className="h-full bg-gradient-to-r from-black to-emerald-400 transition-all duration-500"
                 style={{ width: `${Math.min((quantity / maxQuantity) * 100, 100)}%` }}
               />
             </div>

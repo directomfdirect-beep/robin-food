@@ -54,7 +54,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">
+        <h1 className="ga-title text-[20px]">
           {address ? 'Редактировать адрес' : 'Новый адрес'}
         </h1>
       </div>
@@ -70,7 +70,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               value={query}
               onChange={(e) => handleAddressChange(e.target.value)}
               placeholder="Улица, дом"
-              className="w-full pl-12 pr-4 py-4 bg-gray-100 rounded-2xl text-sm font-medium placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full pl-12 pr-4 py-4 bg-gray-100 rounded-2xl text-sm font-medium placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           </div>
 
@@ -101,7 +101,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               type="text"
               value={apartment}
               onChange={(e) => setApartment(e.target.value)}
-              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           </div>
           <div>
@@ -110,7 +110,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               type="text"
               value={entrance}
               onChange={(e) => setEntrance(e.target.value)}
-              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           </div>
           <div>
@@ -119,7 +119,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               type="text"
               value={floor}
               onChange={(e) => setFloor(e.target.value)}
-              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           </div>
           <div>
@@ -128,7 +128,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               type="text"
               value={intercom}
               onChange={(e) => setIntercom(e.target.value)}
-              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           </div>
         </div>
@@ -159,7 +159,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
               value={customLabel}
               onChange={(e) => setCustomLabel(e.target.value)}
               placeholder="Название"
-              className="w-full mt-2 p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full mt-2 p-3 bg-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
           )}
         </div>
@@ -169,7 +169,7 @@ export const AddressEditScreen = ({ address, onSave, onBack }) => {
           <span className="font-bold text-sm">Сделать основным</span>
           <button
             onClick={() => setIsDefault(!isDefault)}
-            className={`w-12 h-7 rounded-full transition-colors relative ${isDefault ? 'bg-brand-green' : 'bg-gray-300'}`}
+            className={`w-12 h-7 rounded-full transition-colors relative ${isDefault ? 'bg-black' : 'bg-gray-300'}`}
           >
             <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${isDefault ? 'left-6' : 'left-1'}`} />
           </button>

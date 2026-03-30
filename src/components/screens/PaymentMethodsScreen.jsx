@@ -28,7 +28,7 @@ export const PaymentMethodsScreen = ({ onBack }) => {
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">Способы оплаты</h1>
+        <h1 className="ga-title text-[20px]">Способы оплаты</h1>
       </div>
 
       <div className="p-6 space-y-3">
@@ -36,19 +36,19 @@ export const PaymentMethodsScreen = ({ onBack }) => {
           <div
             key={card.id}
             className={`p-4 rounded-2xl flex items-center gap-4 ${
-              card.isDefault ? 'bg-brand-green/[0.08] border-[1.5px] border-brand-green' : 'bg-gray-50 border border-gray-100'
+              card.isDefault ? 'bg-black/[0.08] border-[1.5px] border-black' : 'bg-gray-50 border border-gray-100'
             }`}
           >
             <CreditCard
               size={20}
-              className={card.isDefault ? 'text-brand-green' : 'text-gray-400'}
+              className={card.isDefault ? 'text-black' : 'text-gray-400'}
             />
             <div className="flex-1">
               <p className="font-bold text-sm">
                 {card.brand === 'visa' ? 'Visa' : 'Mastercard'} •••• {card.last4}
               </p>
               {card.isDefault && (
-                <p className="text-[10px] text-brand-green font-bold">Основная</p>
+                <p className="text-[10px] text-black font-bold">Основная</p>
               )}
             </div>
             <div className="flex items-center gap-2">
@@ -85,18 +85,18 @@ export const PaymentMethodsScreen = ({ onBack }) => {
             <input
               type="text"
               placeholder="Номер карты"
-              className="w-full p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+              className="w-full p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-acid/30"
             />
             <div className="flex gap-3">
               <input
                 type="text"
                 placeholder="MM/YY"
-                className="flex-1 p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="flex-1 p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
               <input
                 type="text"
                 placeholder="CVV"
-                className="w-24 p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-24 p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
             </div>
             <div className="flex gap-2">

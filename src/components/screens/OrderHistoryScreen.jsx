@@ -46,7 +46,7 @@ export const OrderHistoryScreen = ({ onBack, onOrderClick }) => {
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">Мои заказы</h1>
+        <h1 className="ga-title text-[20px]">Мои заказы</h1>
       </div>
 
       {/* Filters */}

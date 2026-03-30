@@ -108,16 +108,16 @@ export const SearchResultsScreen = ({
                   className="w-full bg-gray-50 rounded-2xl p-4 flex items-center gap-4 hover:bg-gray-100 transition-colors text-left"
                 >
                   <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                    <MapPin size={22} className="text-brand-green" />
+                    <MapPin size={22} className="text-black" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm truncate">{store.name}</p>
                     <p className="text-[10px] text-gray-400 truncate">{store.address}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="flex items-center gap-1 bg-brand-green/10 px-2.5 py-1 rounded-lg">
-                      <Package size={12} className="text-brand-green" />
-                      <span className="text-[10px] font-bold text-brand-green">
+                    <div className="flex items-center gap-1 bg-acid px-2.5 py-1 rounded-lg">
+                      <Package size={12} className="text-black" />
+                      <span className="text-[10px] font-bold text-black">
                         {storeProducts?.[store.id]?.length || 0}
                       </span>
                     </div>

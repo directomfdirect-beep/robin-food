@@ -1,0 +1,6 @@
+{
+  "appId": "com.robinfood.app",
+  "appName": "Robin Food",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

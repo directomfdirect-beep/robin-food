@@ -1,7 +1,6 @@
 // App color palette
 export const COLORS = {
   acid: '#BDFF00',
-  brandGreen: '#208C80',
   black: '#000000',
   white: '#FFFFFF',
   grayBg: '#F5F5F5',
@@ -170,6 +169,8 @@ export const NAV_TABS = [
 // View states
 export const VIEWS = {
   SPLASH: 'splash',
+  BASKET_BUILDER: 'basket_builder',
+  RADAR_ONBOARD: 'radar_onboard',
   ONBOARD: 'onboard',
   LOGIN: 'login',
   SMS: 'sms',

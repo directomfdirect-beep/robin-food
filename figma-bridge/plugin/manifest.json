@@ -1,0 +1,13 @@
+{
+  "name": "Robin Food Bridge",
+  "id": "robin-food-bridge",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"],
+    "devAllowedDomains": ["http://localhost:3333"],
+    "reasoning": "Bridge server for Cursor AI integration during development"
+  }
+}

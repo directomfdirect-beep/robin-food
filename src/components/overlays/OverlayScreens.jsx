@@ -41,15 +41,16 @@ import { Button } from '@/components/ui/Button';
  * Overlay container with navigation
  */
 const OverlayContainer = ({ title, onClose, children }) => (
-  <div className="fixed inset-0 bg-gray-bg z-[9000] flex flex-col">
-    <nav className="bg-white p-6 flex items-center justify-between border-b border-gray-100 shrink-0">
-      <button onClick={onClose} className="text-gray-400 p-2 -ml-2">
-        <ChevronLeft size={32} />
+  <div className="fixed inset-0 bg-white z-[9000] flex flex-col animate-slide-in-right">
+    <nav className="bg-white px-5 py-4 flex items-center gap-3 border-b border-gray-100 shrink-0">
+      <button onClick={onClose} className="p-2 -ml-2 text-black">
+        <ChevronLeft size={26} />
       </button>
-      <h2 className="ga-title text-xl">{title}</h2>
-      <div className="w-10" />
+      <h2 className="ga-title text-[22px] flex-1">{title}</h2>
     </nav>
-    {children}
+    <div className="flex-1 overflow-y-auto bg-gray-50">
+      {children}
+    </div>
   </div>
 );
 
@@ -70,8 +71,7 @@ export const SettingsOverlay = ({ onClose, onLogout }) => (
             className="w-full flex items-center justify-between p-6 border-b border-gray-50 last:border-0 active:bg-gray-50"
           >
             <div className="flex items-center gap-4">
-              <item.icon size={20} className="text-brand-green" />
-              <span className="ga-label text-xs">
+              <item.icon size={20} className="text-black" />              <span className="ga-label text-xs">
                 {item.label}
               </span>
             </div>
@@ -105,7 +105,7 @@ export const NotificationsOverlay = ({ notifications = [], onClose, onClear, onM
 
   const getIconBg = (type) => {
     switch (type) {
-      case 'order': return 'bg-brand-green/10 text-brand-green';
+      case 'order': return 'bg-gray-100 text-black';
       case 'delivery': return 'bg-blue-50 text-blue-500';
       case 'promo': return 'bg-red-50 text-error';
       default: return 'bg-gray-100 text-gray-500';
@@ -138,7 +138,7 @@ export const NotificationsOverlay = ({ notifications = [], onClose, onClear, onM
                   key={notif.id}
                   onClick={() => onMarkRead?.(notif.id)}
                   className={`bg-white p-4 rounded-2xl border transition-colors cursor-pointer ${
-                    notif.read ? 'border-gray-100' : 'border-brand-green bg-green-50/30'
+                    notif.read ? 'border-gray-100' : 'border-acid bg-green-50/30'
                   }`}
                 >
                   <div className="flex gap-3">
@@ -149,7 +149,7 @@ export const NotificationsOverlay = ({ notifications = [], onClose, onClear, onM
                       <div className="flex items-start justify-between gap-2">
                         <h4 className="ga-body-medium text-sm">{notif.title}</h4>
                         {!notif.read && (
-                          <div className="w-2 h-2 bg-brand-green rounded-full flex-shrink-0 mt-1.5" />
+                          <div className="w-2 h-2 bg-black rounded-full flex-shrink-0 mt-1.5" />
                         )}
                       </div>
                       <p className="ga-body text-xs text-gray-500 mt-0.5 line-clamp-2">
@@ -295,7 +295,7 @@ export const SupportOverlay = ({ onClose }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="🔍 Поиск вопроса..."
-                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full px-4 py-3 bg-white border border-gray-100 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
             </div>
 
@@ -342,7 +342,7 @@ export const SupportOverlay = ({ onClose }) => {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
                 >
                   <option value="">Выберите категорию</option>
                   {categories.map(cat => (
@@ -359,7 +359,7 @@ export const SupportOverlay = ({ onClose }) => {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Иван Петров"
-                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
                 />
               </div>
 
@@ -371,7 +371,7 @@ export const SupportOverlay = ({ onClose }) => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   placeholder="ivan@example.com"
-                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
                 />
               </div>
 
@@ -383,12 +383,12 @@ export const SupportOverlay = ({ onClose }) => {
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   placeholder="Опишите вашу проблему..."
                   rows={4}
-                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30 resize-none"
+                  className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30 resize-none"
                 />
               </div>
 
               {/* Attachment button (mock) */}
-              <button className="flex items-center gap-2 text-brand-green ga-button text-xs">
+              <button className="flex items-center gap-2 text-black ga-button text-xs">
                 <Plus size={16} /> Приложить скриншот
               </button>
 
@@ -396,7 +396,7 @@ export const SupportOverlay = ({ onClose }) => {
               <button
                 onClick={handleSubmitForm}
                 disabled={isSubmitting || !formData.message.trim()}
-                className="w-full py-3 bg-brand-green text-white rounded-xl ga-button text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-black text-white rounded-xl ga-button text-sm disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <Loader2 size={18} className="animate-spin" />
@@ -422,7 +422,7 @@ export const SupportOverlay = ({ onClose }) => {
               <p className="ga-body text-xs text-gray-400 mb-4">
                 Среднее время ответа: 2 мин
               </p>
-              <button className="w-full py-3 bg-brand-green text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2">
+              <button className="w-full py-3 bg-black text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2">
                 <Send size={16} /> Начать чат с поддержкой
               </button>
             </div>
@@ -440,7 +440,7 @@ export const SupportOverlay = ({ onClose }) => {
                       <p className="ga-body-medium text-sm">{chat.topic}</p>
                       <p className="ga-body text-xs text-gray-400">{chat.date}</p>
                     </div>
-                    <span className="ga-label text-[9px] text-brand-green bg-green-50 px-2 py-1 rounded-lg">
+                    <span className="ga-label text-[9px] text-black bg-green-50 px-2 py-1 rounded-lg">
                       ✓ Решена
                     </span>
                   </button>
@@ -476,8 +476,8 @@ export const SupportOverlay = ({ onClose }) => {
                   href="mailto:support@robinfood.ru"
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-10 h-10 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                    <Mail size={18} className="text-brand-green" />
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Mail size={18} className="text-black" />
                   </div>
                   <div>
                     <p className="ga-body-medium text-sm">support@robinfood.ru</p>
@@ -489,8 +489,8 @@ export const SupportOverlay = ({ onClose }) => {
                   href="tel:+74951234567"
                   className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-10 h-10 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                    <Phone size={18} className="text-brand-green" />
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <Phone size={18} className="text-black" />
                   </div>
                   <div>
                     <p className="ga-body-medium text-sm">+7 (495) 123-45-67</p>
@@ -499,8 +499,8 @@ export const SupportOverlay = ({ onClose }) => {
                 </a>
 
                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <div className="w-10 h-10 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                    <MapPin size={18} className="text-brand-green" />
+                  <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                    <MapPin size={18} className="text-black" />
                   </div>
                   <div>
                     <p className="ga-body-medium text-sm">Москва, ул. Пушкина, 10</p>
@@ -629,10 +629,10 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
           <div className="bg-white p-5 rounded-3xl border border-gray-100">
             <h3 className="ga-label text-[10px] text-gray-400 mb-4">САМОВЫВОЗ ИЗ МАГАЗИНА</h3>
             
-            <div className="p-4 border-2 border-brand-green rounded-2xl bg-green-50/50">
+            <div className="p-4 border-2 border-acid rounded-2xl bg-green-50/50">
               <div className="flex items-start gap-3">
                 <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <Store size={24} className="text-brand-green" />
+                  <Store size={24} className="text-black" />
                 </div>
                 <div className="flex-1">
                   <p className="ga-body-medium text-sm text-black">{pickupStore.name}</p>
@@ -641,7 +641,7 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
                     <span className="ga-body text-[10px] text-gray-400">
                       🕐 {pickupStore.workHours}
                     </span>
-                    <span className="ga-label text-[10px] text-brand-green bg-green-100 px-2 py-0.5 rounded-lg">
+                    <span className="ga-label text-[10px] text-black bg-green-100 px-2 py-0.5 rounded-lg">
                       Сборка {pickupStore.pickupTime}
                     </span>
                   </div>
@@ -661,17 +661,17 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
                   onClick={() => setSelectedPayment(method)}
                   className={`w-full p-4 rounded-2xl border-2 flex items-center justify-between transition-colors ${
                     selectedPayment?.id === method.id
-                      ? 'border-brand-green bg-green-50/50'
+                      ? 'border-acid bg-green-50/50'
                       : 'border-gray-100 hover:border-gray-200'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     {/* Radio button */}
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      selectedPayment?.id === method.id ? 'border-brand-green' : 'border-gray-300'
+                      selectedPayment?.id === method.id ? 'border-acid' : 'border-gray-300'
                     }`}>
                       {selectedPayment?.id === method.id && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-brand-green" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-black" />
                       )}
           </div>
                     <span className="ga-body-medium text-sm">
@@ -687,7 +687,7 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
 
             <button 
               onClick={onAddCard}
-              className="w-full mt-3 py-3 ga-button text-xs text-brand-green border border-brand-green rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-1"
+              className="w-full mt-3 py-3 ga-button text-xs text-black border border-acid rounded-xl hover:bg-green-50 transition-colors flex items-center justify-center gap-1"
             >
               <Plus size={14} /> Добавить карту
             </button>
@@ -709,14 +709,14 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
               {promoDiscount > 0 && (
                 <div className="flex justify-between items-center">
                   <span className="ga-body text-sm text-gray-500">Скидка по коду</span>
-                  <span className="ga-body-medium text-sm text-brand-green">−₽{promoDiscount}</span>
+                  <span className="ga-body-medium text-sm text-black">−₽{promoDiscount}</span>
         </div>
               )}
               
               <div className="border-t border-gray-100 pt-3 mt-3">
                 <div className="flex justify-between items-center">
                   <span className="ga-title text-lg">ИТОГО К ОПЛАТЕ</span>
-                  <span className="ga-price text-2xl text-brand-green">₽{total}</span>
+                  <span className="ga-price text-2xl text-black">₽{total}</span>
                 </div>
               </div>
             </div>
@@ -728,16 +728,16 @@ export const CheckoutOverlay = ({ cartItems, cartStats, onClose, onPay, onAddCar
               <button
                 onClick={() => setAgreedToTerms(!agreedToTerms)}
                 className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors ${
-                  agreedToTerms ? 'bg-brand-green border-brand-green' : 'border-gray-300'
+                  agreedToTerms ? 'bg-black border-acid' : 'border-gray-300'
                 }`}
               >
                 {agreedToTerms && <Check size={14} className="text-white" />}
               </button>
               <span className="ga-body text-xs text-gray-500 leading-relaxed">
                 Я согласен(-а) с{' '}
-                <span className="text-brand-green underline">условиями обслуживания</span>
+                <span className="text-black underline">условиями обслуживания</span>
                 {' '}и{' '}
-                <span className="text-brand-green underline">политикой обработки персональных данных</span>
+                <span className="text-black underline">политикой обработки персональных данных</span>
               </span>
             </label>
           </div>
@@ -913,7 +913,7 @@ export const HistoryOverlay = ({ onClose, onRepeatOrder, onStartShopping, onTrac
                     <p className="ga-body text-sm text-gray-500">
                       {order.itemsCount} товар{order.itemsCount > 1 ? (order.itemsCount < 5 ? 'а' : 'ов') : ''}
                     </p>
-                    <p className="ga-price text-lg text-brand-green">₽{order.total}</p>
+                    <p className="ga-price text-lg text-black">₽{order.total}</p>
                   </div>
 
                   {/* Store & Address */}
@@ -965,7 +965,7 @@ export const HistoryOverlay = ({ onClose, onRepeatOrder, onStartShopping, onTrac
                       <button
                         onClick={() => handleRepeat(order.id)}
                         disabled={isLoading}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-brand-green text-white rounded-xl ga-button text-xs hover:bg-brand-green/90 transition-colors disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-black text-white rounded-xl ga-button text-xs hover:bg-black/90 transition-colors disabled:opacity-50"
                       >
                         <RotateCcw size={14} />
                         Повторить
@@ -1087,7 +1087,7 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
       isActive: true,
       userCanUse: true,
       icon: '🌲',
-      iconBg: 'bg-brand-green',
+      iconBg: 'bg-black',
     },
     {
       id: 'promo_005',
@@ -1172,7 +1172,7 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value.toUpperCase())}
             placeholder="🔍 Введите промокод..."
-            className="w-full px-4 py-3 bg-gray-50 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+            className="w-full px-4 py-3 bg-gray-50 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
           />
           {searchQuery && (
             <button
@@ -1224,7 +1224,7 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
                   onClick={() => handleCopyCode(promo.code)}
                   className={`px-3 py-1.5 rounded-lg ga-button text-[10px] transition-colors ${
                     copiedCode === promo.code
-                      ? 'bg-brand-green text-white'
+                      ? 'bg-black text-white'
                       : 'bg-black text-white'
                   }`}
                 >
@@ -1235,7 +1235,7 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
               {/* Details */}
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="ga-price text-base text-brand-green">
+                  <span className="ga-price text-base text-black">
                     {promo.discountType === 'percentage' ? `-${promo.discountValue}%` : `-${promo.discountValue} ₽`}
                   </span>
                   {promo.maxDiscount > 0 && (
@@ -1264,12 +1264,12 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
               <div className="flex items-center gap-2">
                 {promo.userCanUse ? (
                   <>
-                    <span className="ga-label text-[9px] text-brand-green bg-green-50 px-2 py-1 rounded-lg">
+                    <span className="ga-label text-[9px] text-black bg-green-50 px-2 py-1 rounded-lg">
                       ✓ Доступно
                     </span>
                     <button
                       onClick={() => handleApply(promo.code)}
-                      className="flex-1 py-2.5 bg-brand-green text-white rounded-xl ga-button text-xs hover:bg-brand-green/90 transition-colors"
+                      className="flex-1 py-2.5 bg-black text-white rounded-xl ga-button text-xs hover:bg-black/90 transition-colors"
                     >
                       Применить к заказу
                     </button>
@@ -1311,7 +1311,7 @@ export const PromotionsOverlay = ({ onClose, onApplyPromo }) => {
                     <div className="flex items-center gap-2">
                       <span className="text-sm">{promo.icon}</span>
                       <code className="ga-body-medium text-sm">{promo.code}</code>
-                      <span className="ga-price text-xs text-brand-green">
+                      <span className="ga-price text-xs text-black">
                         {promo.discountType === 'percentage' ? `-${promo.discountValue}%` : `-${promo.discountValue}₽`}
                       </span>
                     </div>
@@ -1493,7 +1493,7 @@ export const ReviewsOverlay = ({ product, onClose }) => {
           {/* Write review button */}
           <button
             onClick={() => setShowWriteReview(true)}
-            className="w-full mt-4 py-3 bg-brand-green text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2"
+            className="w-full mt-4 py-3 bg-black text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2"
           >
             <Edit3 size={16} /> Написать отзыв
           </button>
@@ -1527,7 +1527,7 @@ export const ReviewsOverlay = ({ product, onClose }) => {
                 onClick={() => setSortBy(option.id)}
                 className={`px-3 py-1.5 rounded-lg ga-body text-xs transition-colors ${
                   sortBy === option.id
-                    ? 'bg-brand-green/10 text-brand-green'
+                    ? 'bg-gray-100 text-black'
                     : 'text-gray-400'
                 }`}
               >
@@ -1566,7 +1566,7 @@ export const ReviewsOverlay = ({ product, onClose }) => {
                   onClick={() => handleVote(review.id, true)}
                   className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-colors ${
                     userVotes[review.id] === 'up' 
-                      ? 'bg-brand-green/10 text-brand-green' 
+                      ? 'bg-gray-100 text-black' 
                       : 'bg-gray-50 text-gray-400'
                   }`}
                 >
@@ -1623,12 +1623,12 @@ export const ReviewsOverlay = ({ product, onClose }) => {
                 onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
                 placeholder="Расскажите о вашем опыте..."
                 rows={4}
-                className="w-full p-4 bg-gray-50 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30 resize-none"
+                className="w-full p-4 bg-gray-50 rounded-2xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30 resize-none"
               />
             </div>
 
             {/* Photo button */}
-            <button className="flex items-center gap-2 text-brand-green ga-button text-xs mb-6">
+            <button className="flex items-center gap-2 text-black ga-button text-xs mb-6">
               <Plus size={16} /> Добавить фото
             </button>
 
@@ -1636,7 +1636,7 @@ export const ReviewsOverlay = ({ product, onClose }) => {
             <button
               onClick={handleSubmitReview}
               disabled={isSubmitting || !newReview.text.trim()}
-              className="w-full py-4 bg-brand-green text-white rounded-xl ga-button text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-black text-white rounded-xl ga-button text-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <Loader2 size={18} className="animate-spin" />
@@ -1681,8 +1681,20 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
     setShowPhotoOptions(false);
     
     if (type === 'camera') {
-      // In real app: open camera
-      alert('Открытие камеры...');
+      // Camera not available in web — use gallery fallback
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.capture = 'environment';
+      input.onchange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => { setAvatarPreview(ev.target?.result); };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
     } else if (type === 'gallery') {
       // Simulate file picker - in real app use input[type=file]
       const input = document.createElement('input');
@@ -1726,21 +1738,21 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-brand-green text-white ga-title text-3xl">
+                  <div className="w-full h-full flex items-center justify-center bg-black text-white ga-title text-3xl">
                     {formData.firstName?.charAt(0) || 'U'}
                   </div>
                 )}
               </div>
               <button
                 onClick={() => setShowPhotoOptions(true)}
-                className="absolute bottom-0 right-0 p-3 bg-brand-green rounded-full border-3 border-white shadow-lg hover:bg-brand-green/90 transition-colors active:scale-90"
+                className="absolute bottom-0 right-0 p-3 bg-black rounded-full border-3 border-white shadow-lg hover:bg-black/90 transition-colors active:scale-90"
               >
                 <Camera size={16} className="text-white" />
               </button>
             </div>
             <button
               onClick={() => setShowPhotoOptions(true)}
-              className="mt-3 ga-button text-sm text-brand-green"
+              className="mt-3 ga-button text-sm text-black"
             >
               Изменить фото
             </button>
@@ -1757,7 +1769,7 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                 value={formData.firstName}
                 onChange={(e) => handleChange('firstName', e.target.value)}
                 placeholder="Введите имя"
-                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
             </div>
             
@@ -1768,7 +1780,7 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                 value={formData.lastName}
                 onChange={(e) => handleChange('lastName', e.target.value)}
                 placeholder="Введите фамилию"
-                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
             </div>
           </div>
@@ -1784,7 +1796,7 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
                 placeholder="email@example.com"
-                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
             </div>
             
@@ -1797,7 +1809,7 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   placeholder="+7 (___) ___-__-__"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
                 />
               </div>
               <p className="mt-1.5 ga-body text-[10px] text-gray-400">
@@ -1812,7 +1824,7 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
             disabled={!isChanged || isSaving}
             className={`w-full py-4 rounded-2xl ga-button text-sm flex items-center justify-center gap-2 transition-colors ${
               isChanged && !isSaving
-                ? 'bg-brand-green text-white'
+                ? 'bg-black text-white'
                 : 'bg-gray-100 text-gray-400'
             }`}
           >
@@ -1847,8 +1859,8 @@ export const EditProfileOverlay = ({ user, onClose, onSave }) => {
                 onClick={() => handlePhotoSelect('camera')}
                 className="w-full p-4 flex items-center gap-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors"
               >
-                <div className="w-10 h-10 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                  <Camera size={20} className="text-brand-green" />
+                <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <Camera size={20} className="text-black" />
                 </div>
                 <span className="ga-body-medium text-sm">Сделать фото</span>
               </button>
@@ -1954,12 +1966,12 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
             <div
               key={addr.id}
               className={`bg-white p-4 rounded-2xl border transition-colors ${
-                addr.isDefault ? 'border-brand-green bg-green-50/30' : 'border-gray-100'
+                addr.isDefault ? 'border-acid bg-green-50/30' : 'border-gray-100'
               }`}
             >
               <div className="flex items-start gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                  addr.isDefault ? 'bg-brand-green text-white' : 'bg-gray-100 text-gray-500'
+                  addr.isDefault ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'
                 }`}>
                   <MapPin size={20} />
                 </div>
@@ -1967,7 +1979,7 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
                   <div className="flex items-center gap-2">
                     <h4 className="ga-body-medium text-sm">{addr.title}</h4>
                     {addr.isDefault && (
-                      <span className="px-2 py-0.5 bg-brand-green text-white text-[10px] ga-label rounded-full">
+                      <span className="px-2 py-0.5 bg-black text-white text-[10px] ga-label rounded-full">
                         По умолчанию
                       </span>
                     )}
@@ -1978,7 +1990,7 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
                     {!addr.isDefault && (
                       <button
                         onClick={() => handleSetDefault(addr.id)}
-                        className="ga-button text-xs text-brand-green"
+                        className="ga-button text-xs text-black"
                       >
                         Сделать основным
                       </button>
@@ -2021,14 +2033,14 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
                 value={newAddress.title}
                 onChange={(e) => setNewAddress(prev => ({ ...prev, title: e.target.value }))}
                 placeholder="Название (напр. Дом, Работа)"
-                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
               <input
                 type="text"
                 value={newAddress.address}
                 onChange={(e) => setNewAddress(prev => ({ ...prev, address: e.target.value }))}
                 placeholder="Полный адрес"
-                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+                className="w-full p-3 bg-gray-50 rounded-xl ga-body text-sm focus:outline-none focus:ring-2 focus:ring-acid/30"
               />
               <div className="flex gap-2">
                 <button
@@ -2044,7 +2056,7 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
                 <button
                   onClick={editingId ? handleSaveEdit : handleAddAddress}
                   disabled={!newAddress.title.trim() || !newAddress.address.trim()}
-                  className="flex-1 py-3 bg-brand-green text-white rounded-xl ga-button text-sm disabled:opacity-50"
+                  className="flex-1 py-3 bg-black text-white rounded-xl ga-button text-sm disabled:opacity-50"
                 >
                   {editingId ? 'Сохранить' : 'Добавить'}
                 </button>
@@ -2056,7 +2068,7 @@ export const AddressesOverlay = ({ onClose, onSelectAddress }) => {
           {!showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
-              className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl ga-button text-sm text-gray-500 flex items-center justify-center gap-2 hover:border-brand-green hover:text-brand-green transition-colors"
+              className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl ga-button text-sm text-gray-500 flex items-center justify-center gap-2 hover:border-acid hover:text-black transition-colors"
             >
               <Plus size={18} /> Добавить адрес
             </button>
@@ -2134,7 +2146,7 @@ export const PaymentOverlay = ({ onClose, onAddCard }) => {
             <div
               key={card.id}
               className={`bg-white p-4 rounded-2xl border transition-colors ${
-                card.isDefault ? 'border-brand-green bg-green-50/30' : 'border-gray-100'
+                card.isDefault ? 'border-acid bg-green-50/30' : 'border-gray-100'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -2145,7 +2157,7 @@ export const PaymentOverlay = ({ onClose, onAddCard }) => {
                       {card.brand} •••• {card.last4}
                     </h4>
                     {card.isDefault && (
-                      <span className="px-2 py-0.5 bg-brand-green text-white text-[10px] ga-label rounded-full">
+                      <span className="px-2 py-0.5 bg-black text-white text-[10px] ga-label rounded-full">
                         Основная
                       </span>
                     )}
@@ -2160,7 +2172,7 @@ export const PaymentOverlay = ({ onClose, onAddCard }) => {
                 {!card.isDefault && (
                   <button
                     onClick={() => handleSetDefault(card.id)}
-                    className="ga-button text-xs text-brand-green"
+                    className="ga-button text-xs text-black"
                   >
                     Сделать основной
                   </button>
@@ -2190,7 +2202,7 @@ export const PaymentOverlay = ({ onClose, onAddCard }) => {
           {/* Add card button */}
           <button
             onClick={onAddCard}
-            className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl ga-button text-sm text-gray-500 flex items-center justify-center gap-2 hover:border-brand-green hover:text-brand-green transition-colors"
+            className="w-full py-4 border-2 border-dashed border-gray-200 rounded-2xl ga-button text-sm text-gray-500 flex items-center justify-center gap-2 hover:border-acid hover:text-black transition-colors"
           >
             <Plus size={18} /> Добавить карту
           </button>
@@ -2198,7 +2210,7 @@ export const PaymentOverlay = ({ onClose, onAddCard }) => {
           {/* Payment info */}
           <div className="bg-gray-50 p-4 rounded-2xl">
             <div className="flex items-center gap-2 mb-2">
-              <Shield size={16} className="text-brand-green" />
+              <Shield size={16} className="text-black" />
               <span className="ga-label text-[10px] text-gray-400">БЕЗОПАСНОСТЬ</span>
             </div>
             <p className="ga-body text-xs text-gray-500">
@@ -2294,8 +2306,8 @@ export const TrackingOverlay = ({ order, onClose, onCancel }) => {
         <div className="relative h-64 bg-gray-100">
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Truck size={32} className="text-brand-green" />
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Truck size={32} className="text-black" />
               </div>
               <p className="ga-body text-sm text-gray-500">Карта отслеживания</p>
               <p className="ga-body text-xs text-gray-400">Курьер в пути</p>
@@ -2314,12 +2326,12 @@ export const TrackingOverlay = ({ order, onClose, onCancel }) => {
           <div className="bg-white p-5 rounded-3xl border border-gray-100">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                  <Clock size={24} className="text-brand-green" />
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center">
+                  <Clock size={24} className="text-black" />
                 </div>
                 <div>
                   <p className="ga-label text-[10px] text-gray-400">ПРИБЫТИЕ ЧЕРЕЗ</p>
-                  <p className="ga-price text-2xl text-brand-green">{Math.round(eta)} мин</p>
+                  <p className="ga-price text-2xl text-black">{Math.round(eta)} мин</p>
                 </div>
               </div>
               <div className="text-right">
@@ -2331,7 +2343,7 @@ export const TrackingOverlay = ({ order, onClose, onCancel }) => {
             {/* Progress bar */}
             <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-brand-green rounded-full transition-all duration-1000"
+                className="h-full bg-black rounded-full transition-all duration-1000"
                 style={{ width: `${Math.max(10, 100 - (eta / 10) * 100)}%` }}
               />
             </div>
@@ -2369,13 +2381,13 @@ export const TrackingOverlay = ({ order, onClose, onCancel }) => {
             <div className="flex gap-3 mt-4">
               <button
                 onClick={handleMessage}
-                className="flex-1 py-3 bg-brand-green text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-black text-white rounded-xl ga-button text-sm flex items-center justify-center gap-2"
               >
                 <Send size={16} /> Написать
               </button>
               <button
                 onClick={handleCall}
-                className="flex-1 py-3 border-2 border-brand-green text-brand-green rounded-xl ga-button text-sm flex items-center justify-center gap-2"
+                className="flex-1 py-3 border-2 border-acid text-black rounded-xl ga-button text-sm flex items-center justify-center gap-2"
               >
                 <Phone size={16} /> Позвонить
               </button>
@@ -2414,7 +2426,7 @@ export const TrackingOverlay = ({ order, onClose, onCancel }) => {
               <button
                 onClick={() => setNotifications(!notifications)}
                 className={`w-12 h-6 rounded-full transition-colors ${
-                  notifications ? 'bg-brand-green' : 'bg-gray-200'
+                  notifications ? 'bg-black' : 'bg-gray-200'
                 }`}
               >
                 <div className={`w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${

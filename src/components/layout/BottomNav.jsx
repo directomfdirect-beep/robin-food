@@ -1,51 +1,67 @@
 import React from 'react';
-import { Radar, LayoutGrid, ShoppingBag, Heart, User } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Radar, LayoutGrid, ShoppingBag, Heart, User, Star, Bell, Map, Tag, Home, Search, Gift, Settings } from 'lucide-react';
 
-const NAV_ITEMS = [
-  { id: 'home', icon: Radar, label: 'Каталог' },
-  { id: 'categories', icon: LayoutGrid, label: 'Разделы' },
-  { id: 'cart', icon: ShoppingBag, label: 'Корзина' },
-  { id: 'favorites', icon: Heart, label: 'Избранное' },
-  { id: 'profile', icon: User, label: 'Профиль' },
+export const ICON_MAP = {
+  Radar, LayoutGrid, ShoppingBag, Heart, User, Star, Bell, Map, Tag, Home, Search, Gift, Settings,
+};
+
+const DEFAULT_NAV_ITEMS = [
+  { id: 'home', icon: 'Radar', label: 'Главная' },
+  { id: 'catalog', icon: 'Search', label: 'Каталог' },
+  { id: 'cart', icon: 'ShoppingBag', label: 'Корзина' },
+  { id: 'profile', icon: 'User', label: 'Профиль' },
 ];
 
 /**
- * Bottom navigation bar — 5 tabs
- * Uses env(safe-area-inset-bottom) for native apps, minimal padding for web
+ * Bottom navigation — editorial black/acid style
+ * Active tab: acid pill background
  */
-export const BottomNav = ({ activeTab, onTabChange, cartCount = 0 }) => {
+export const BottomNav = ({ activeTab, onTabChange, cartCount = 0, tabLabels }) => {
+  const adminItems = tabLabels && tabLabels.length > 0
+    ? tabLabels.filter(t => ['home', 'catalog', 'cart', 'profile'].includes(t.id))
+    : null;
+  const items = (adminItems && adminItems.length > 0 ? adminItems : DEFAULT_NAV_ITEMS).map((item) => ({
+    ...item,
+    IconComponent: ICON_MAP[item.icon] || User,
+  }));
+
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-2xl border-t border-gray-100 px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex justify-between items-center z-[500] shadow-lg"
-    >
-      {NAV_ITEMS.map((item) => {
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 pt-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] flex justify-around items-center z-[500]">
+      {items.map((item) => {
         const isActive = activeTab === item.id;
         const showBadge = item.id === 'cart' && cartCount > 0;
 
         return (
-          <button
+          <motion.button
             key={item.id}
             onClick={() => onTabChange(item.id)}
-            className={`
-              flex flex-col items-center gap-0.5 transition-all relative min-w-[48px] py-1
-              ${isActive ? 'text-black scale-110' : 'text-gray-300'}
-            `}
+            whileTap={{ scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            className="flex flex-col items-center gap-0.5 relative min-w-[60px] py-1"
           >
-            <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-            <span
+            <div
               className={`
-                text-[9px] font-bold uppercase
-                ${isActive ? 'opacity-100' : 'opacity-50'}
+                w-10 h-8 rounded-2xl flex items-center justify-center transition-colors duration-200
+                ${isActive ? 'bg-acid' : 'bg-transparent'}
               `}
             >
+              <item.IconComponent
+                size={20}
+                strokeWidth={isActive ? 2.5 : 1.8}
+                className={isActive ? 'text-black' : 'text-gray-400'}
+              />
+            </div>
+            <span className={`text-[8px] font-bold uppercase tracking-wide transition-colors ${isActive ? 'text-black' : 'text-gray-400'}`}>
               {item.label}
             </span>
+
             {showBadge && (
-              <div className="absolute -top-1 -right-1 bg-brand-green text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
-                {cartCount}
+              <div className="absolute top-0 right-2 bg-black text-acid text-[8px] ga-button w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">
+                {cartCount > 9 ? '9+' : cartCount}
               </div>
             )}
-          </button>
+          </motion.button>
         );
       })}
     </nav>

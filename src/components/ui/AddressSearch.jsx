@@ -178,7 +178,7 @@ export const AddressSearch = ({ value, onChange, onSelect, placeholder = 'Вве
     <div className="relative w-full">
       {/* Input field */}
       <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-green">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black">
           {isLoading ? (
             <Loader2 size={20} className="animate-spin" />
           ) : (
@@ -199,7 +199,7 @@ export const AddressSearch = ({ value, onChange, onSelect, placeholder = 'Вве
             bg-gray-100 rounded-2xl
             text-sm font-medium text-black
             placeholder:text-gray-400
-            focus:outline-none focus:ring-2 focus:ring-brand-green/30
+            focus:outline-none focus:ring-2 focus:ring-acid/30
             transition-all
           "
         />
@@ -233,11 +233,11 @@ export const AddressSearch = ({ value, onChange, onSelect, placeholder = 'Вве
               className={`
                 w-full px-4 py-3 text-left flex items-start gap-3
                 transition-colors
-                ${index === selectedIndex ? 'bg-brand-green/10' : 'hover:bg-gray-50'}
+                ${index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'}
                 ${index !== suggestions.length - 1 ? 'border-b border-gray-50' : ''}
               `}
             >
-              <MapPin size={18} className="text-brand-green mt-0.5 flex-shrink-0" />
+              <MapPin size={18} className="text-black mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-black truncate">
                   {suggestion.shortName}

@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { STORES } from '@/data/constants';
 import { MASTER_CATALOG } from '@/data/catalog';
 import { syncProductsToDatabase, checkDatabaseConnection } from '@/lib/supabase';
+import { loadAlerts } from '@/utils/alerts';
 
 /**
  * Calculate distance between two points using Haversine formula
@@ -73,9 +74,11 @@ export const useStoreSelection = () => {
   // Selected chain filter (reserved for future use)
   const [selectedChain, setSelectedChain] = useState(null);
   
+  // Matched alerts from last radar apply
+  const [matchedAlerts, setMatchedAlerts] = useState([]);
+
   // Database sync status
   const [dbSyncStatus, setDbSyncStatus] = useState({ syncing: false, synced: false, error: null });
-
   /**
    * Apply radar - find stores in radius and distribute products
    * @param {Object} center - Center coordinates {lat, lng}
@@ -116,6 +119,7 @@ export const useStoreSelection = () => {
       const store = stores[storeIndex];
       
       // Create product copy with store info (including chain icon)
+      const expiresIn = (1 + Math.random() * 7) * 60 * 60 * 1000; // 1–8 hours in ms
       const productWithStore = {
         ...product,
         storeId: store.id,
@@ -123,6 +127,7 @@ export const useStoreSelection = () => {
         storeAddress: store.address,
         storeIcon: store.icon || '/chains/magnit.png',
         storeChain: store.chain || 'magnit',
+        discountExpiresAt: Date.now() + expiresIn,
       };
       
       distribution[store.id].push(productWithStore);
@@ -134,9 +139,45 @@ export const useStoreSelection = () => {
     // Reset selected store when radar changes
     setSelectedStore(null);
     
+    // Check smart alerts against distributed products
+    const allProducts = Object.values(distribution).flat();
+    const today = new Date().toLocaleDateString('ru-RU');
+    const activeAlerts = loadAlerts().filter((a) => a.enabled);
+
+    if (activeAlerts.length > 0) {
+      const triggered = activeAlerts.filter((alert) => {
+        if (alert.radiusKm > radius) return false;
+        return allProducts.some((p) => {
+          if (p.category !== alert.category) return false;
+          const basePrice = p.basePrice || p.price || 0;
+          const currentPrice = p.price || basePrice;
+          const discount = basePrice > 0 ? Math.round((1 - currentPrice / basePrice) * 100) : 0;
+          return discount >= alert.minDiscount;
+        });
+      });
+
+      if (triggered.length > 0) {
+        try {
+          const all = loadAlerts();
+          const updated = all.map((a) => {
+            const match = triggered.find((t) => t.id === a.id);
+            return match
+              ? { ...a, triggerCount: (a.triggerCount || 0) + 1, lastTriggered: today }
+              : a;
+          });
+          localStorage.setItem('rf_smart_alerts', JSON.stringify(updated));
+        } catch {
+          // ignore
+        }
+        setMatchedAlerts(triggered);
+      } else {
+        setMatchedAlerts([]);
+      }
+    }
+
     // Sync to database in background
     syncToDatabase(stores, distribution);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Sync products to Supabase database
@@ -268,6 +309,7 @@ export const useStoreSelection = () => {
     selectedChain,
     chainsInRadius,
     dbSyncStatus,
+    matchedAlerts,
     
     // Constants
     SHOPPING_MODES,

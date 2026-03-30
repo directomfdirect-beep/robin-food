@@ -12,3 +12,5 @@ export {
   EditProfileOverlay,
   FavoritesOverlay,
 } from './OverlayScreens';
+
+export { AdminPanel } from './AdminPanel';

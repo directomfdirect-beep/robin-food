@@ -25,7 +25,7 @@ export const OrderDetailScreen = ({ order, onBack, onRate }) => {
           <ArrowLeft size={20} />
         </button>
         <div>
-          <h1 className="font-black italic uppercase text-lg">Заказ {orderData.number}</h1>
+          <h1 className="ga-title text-[20px]">Заказ {orderData.number}</h1>
           <p className="text-[10px] text-gray-400">{orderData.createdAt}</p>
         </div>
       </div>
@@ -40,7 +40,7 @@ export const OrderDetailScreen = ({ order, onBack, onRate }) => {
 
         {/* Store */}
         <div className="flex items-center gap-3 bg-gray-50 rounded-2xl p-4">
-          <MapPin size={18} className="text-brand-green" />
+          <MapPin size={18} className="text-black" />
           <div>
             <p className="font-bold text-sm">{orderData.storeName}</p>
             <p className="text-[10px] text-gray-400">{orderData.storeAddress}</p>
@@ -70,7 +70,7 @@ export const OrderDetailScreen = ({ order, onBack, onRate }) => {
         {/* Total */}
         <div className="bg-gray-50 rounded-2xl p-4 flex justify-between items-center">
           <span className="font-bold text-sm">Итого</span>
-          <span className="font-bold text-xl text-brand-green">₽{orderData.total}</span>
+          <span className="font-bold text-xl text-black">₽{orderData.total}</span>
         </div>
 
         {/* Rating */}
@@ -103,7 +103,7 @@ export const OrderDetailScreen = ({ order, onBack, onRate }) => {
                   placeholder="Комментарий (опционально)"
                   maxLength={500}
                   rows={3}
-                  className="w-full p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-green/30 resize-none mb-3"
+                  className="w-full p-3 bg-white rounded-xl text-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-acid/30 resize-none mb-3"
                 />
                 <Button onClick={handleRate} fullWidth size="md" disabled={rating === 0}>
                   Отправить оценку

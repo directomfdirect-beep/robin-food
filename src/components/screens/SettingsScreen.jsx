@@ -22,7 +22,7 @@ export const SettingsScreen = ({ onBack, onLogout }) => {
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">Настройки</h1>
+        <h1 className="ga-title text-[22px]">Настройки</h1>
       </div>
 
       <div className="p-6 space-y-6">
@@ -36,9 +36,9 @@ export const SettingsScreen = ({ onBack, onLogout }) => {
             </div>
             <button
               onClick={() => setPushEnabled(!pushEnabled)}
-              className={`w-12 h-7 rounded-full transition-colors relative ${pushEnabled ? 'bg-brand-green' : 'bg-gray-300'}`}
+              className={`w-12 h-7 rounded-full transition-colors relative ${pushEnabled ? 'bg-black' : 'bg-gray-300'}`}
             >
-              <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-transform ${pushEnabled ? 'left-6' : 'left-1'}`} />
+              <div className={`absolute top-1 w-5 h-5 rounded-full shadow transition-all ${pushEnabled ? 'left-6 bg-acid' : 'left-1 bg-white'}`} />
             </button>
           </div>
         </div>
@@ -91,7 +91,10 @@ export const SettingsScreen = ({ onBack, onLogout }) => {
                 >
                   Отмена
                 </button>
-                <button className="flex-1 py-3 bg-error rounded-xl text-sm font-bold text-white">
+                <button
+                  onClick={() => { setShowDeleteConfirm(false); onLogout?.(); }}
+                  className="flex-1 py-3 bg-error rounded-xl text-sm font-bold text-white"
+                >
                   Удалить
                 </button>
               </div>

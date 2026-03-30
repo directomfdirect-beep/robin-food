@@ -30,30 +30,30 @@ export const StoreScreen = ({
   return (
     <div className="min-h-full bg-white animate-fade-in pb-32">
       {/* Header */}
-      <div className="bg-brand-green p-6 pb-8 relative">
+      <div className="bg-black p-6 pb-8 relative">
         <button
           onClick={onBack}
-          className="absolute top-6 left-4 p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
+          className="absolute top-6 left-4 p-2 bg-white/10 rounded-full"
         >
           <ArrowLeft size={20} className="text-white" />
         </button>
 
         <div className="pt-10 text-white">
-          <h1 className="font-black italic uppercase text-2xl leading-tight">{store.name}</h1>
-          <div className="flex items-center gap-2 mt-2 text-white/80">
-            <MapPin size={14} />
-            <span className="text-sm">{store.address}</span>
+          <h1 className="ga-title text-[28px] leading-tight">{store.name}</h1>
+          <div className="flex items-center gap-2 mt-2 text-white/70">
+            <MapPin size={13} />
+            <span className="ga-body text-sm">{store.address}</span>
           </div>
-          <div className="flex items-center gap-2 mt-1 text-white/60">
-            <Clock size={14} />
-            <span className="text-xs">08:00 — 22:00</span>
+          <div className="flex items-center gap-2 mt-1 text-white/50">
+            <Clock size={13} />
+            <span className="ga-body text-xs">08:00 — 22:00</span>
           </div>
         </div>
 
         <div className="flex gap-3 mt-4">
-          <div className="bg-white/20 rounded-xl px-3 py-2 flex items-center gap-2">
-            <Package size={14} className="text-white" />
-            <span className="text-xs font-bold text-white">{products?.length || 0} товаров</span>
+          <div className="bg-acid rounded-xl px-3 py-2 flex items-center gap-2">
+            <Package size={13} className="text-black" />
+            <span className="ga-label text-[10px] text-black">{products?.length || 0} товаров</span>
           </div>
         </div>
       </div>
@@ -73,7 +73,7 @@ export const StoreScreen = ({
           {onViewAll && (
             <button
               onClick={onViewAll}
-              className="text-xs font-bold text-brand-green flex items-center gap-1"
+              className="text-xs font-bold text-black flex items-center gap-1"
             >
               Все магазины <ChevronRight size={14} />
             </button>

@@ -1,24 +1,33 @@
-import React, { useEffect } from 'react';
-import { Leaf } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 
 /**
- * Splash screen with brand logo
+ * Splash screen with brand video
  */
 export const SplashScreen = ({ onComplete }) => {
+  const videoRef = useRef(null);
+
   useEffect(() => {
-    const timer = setTimeout(onComplete, 1500);
+    const timer = setTimeout(onComplete, 5000);
+
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+
     return () => clearTimeout(timer);
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]">
-      <div className="w-20 h-20 bg-acid rounded-3xl flex items-center justify-center shadow-2xl animate-bounce">
-        <Leaf size={40} className="text-black" />
-      </div>
-      <h1 className="mt-6 text-4xl font-black uppercase italic text-acid tracking-tighter">
-        Robin Food
-      </h1>
-      <p className="ga-body text-sm text-gray-500 mt-2">Спасите еду — спасите бюджет</p>
+    <div className="fixed inset-0 bg-black flex items-center justify-center z-[9999]">
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        loop
+        className="w-full h-full object-cover"
+      >
+        <source src="/splash.mp4" type="video/mp4" />
+      </video>
     </div>
   );
 };

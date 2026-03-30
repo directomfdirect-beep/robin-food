@@ -59,7 +59,7 @@ export const SearchScreen = ({ onSearch, onCategorySelect }) => {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="Искать товары, магазины..."
-            className="w-full pl-12 pr-12 py-4 bg-gray-100 rounded-2xl text-sm font-medium placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-green/30"
+            className="w-full pl-12 pr-12 py-4 bg-gray-100 rounded-2xl text-sm font-medium placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-acid/30"
           />
           {query && (
             <button
@@ -77,7 +77,7 @@ export const SearchScreen = ({ onSearch, onCategorySelect }) => {
         <div className="px-6 mb-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-[10px] font-bold uppercase text-gray-400">Недавние запросы</h3>
-            <button onClick={clearRecent} className="text-[10px] font-bold text-brand-green">
+            <button onClick={clearRecent} className="text-[10px] font-bold text-black">
               Очистить
             </button>
           </div>
@@ -106,7 +106,7 @@ export const SearchScreen = ({ onSearch, onCategorySelect }) => {
               onClick={() => onCategorySelect?.(cat)}
               className="flex items-center gap-3 p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors active:scale-[0.98]"
             >
-              <TrendingUp size={18} className="text-brand-green" />
+              <TrendingUp size={18} className="text-black" />
               <span className="font-bold text-sm">{cat}</span>
             </button>
           ))}

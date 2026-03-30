@@ -5,8 +5,8 @@ import { STORES } from '@/data/constants';
  * Uber-style minimalist map colors with brand green radar
  */
 const MAP_COLORS = {
-  radar: '#208C80',
-  radarFill: 'rgba(32, 140, 128, 0.06)',
+  radar: '#BDFF00',
+  radarFill: 'rgba(189, 255, 0, 0.08)',
   pulse: '#000000',
   pulseRing: 'rgba(0, 0, 0, 0.15)',
 };
@@ -42,7 +42,7 @@ const DEFAULT_CENTER = { lat: 55.7282, lng: 37.5795 };
 /**
  * Leaflet map management hook with Uber-style visualization
  */
-export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER }) => {
+export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER, containerId = 'osm-map-home' }) => {
   const mapRef = useRef(null);
   const circleRef = useRef(null);
   const userMarkerRef = useRef(null);
@@ -269,7 +269,7 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
   useEffect(() => {
     if (enabled) {
       const timer = setTimeout(() => {
-        initMap('osm-map', currentRadiusRef.current, currentCenterRef.current);
+        initMap(containerId, currentRadiusRef.current, currentCenterRef.current);
       }, 150);
       return () => {
         clearTimeout(timer);
@@ -277,7 +277,7 @@ export const useMap = ({ enabled = false, radius = 1.5, center = DEFAULT_CENTER 
       };
     }
     return cleanup;
-  }, [enabled, initMap, cleanup]);
+  }, [enabled, containerId, initMap, cleanup]);
 
   // Effect for radius updates
   useEffect(() => {

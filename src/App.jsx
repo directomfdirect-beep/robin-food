@@ -1,12 +1,16 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useCart } from '@/hooks/useCart';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useStoreSelection } from '@/hooks/useStoreSelection';
+import { useAdminConfig } from '@/hooks/useAdminConfig';
 import { DEFAULT_USER, VIEWS } from '@/data/constants';
 
 // Screens
 import {
   SplashScreen,
+  BasketBuilderScreen,
+  RadarOnboardingScreen,
   OnboardingScreen,
   LoginScreen,
   SmsScreen,
@@ -34,6 +38,7 @@ import {
   SmartAlertsScreen,
   AlertDetailScreen,
   CategoryBrowserScreen,
+  CatalogTab as CatalogTabFull,
 } from '@/components/screens';
 
 // Layout
@@ -43,7 +48,7 @@ import { BottomNav } from '@/components/layout';
 import { ShoppingModeModal, AutoPurchaseModal } from '@/components/modals';
 
 // Overlays still used as lightweight sheets
-import { NotificationsOverlay, SupportOverlay, PromotionsOverlay, EditProfileOverlay } from '@/components/overlays';
+import { NotificationsOverlay, SupportOverlay, PromotionsOverlay, EditProfileOverlay, AdminPanel } from '@/components/overlays';
 
 /**
  * Main Application Component — Navigation v1.4.5
@@ -54,11 +59,23 @@ import { NotificationsOverlay, SupportOverlay, PromotionsOverlay, EditProfileOve
  * - Screen stack: push screens on top of tabs, back pops the stack
  */
 export default function App() {
+  // ───── User preferences (from BasketBuilder onboarding) ─────
+  const [userPrefs, setUserPrefs] = useState(() => {
+    try {
+      const raw = localStorage.getItem('rf_user_prefs');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
+
   // ───── Auth / View state ─────
   const [view, setView] = useState(VIEWS.SPLASH);
   const [activeTab, setActiveTab] = useState('home');
   const [phone, setPhone] = useState('');
-  const [user] = useState(DEFAULT_USER);
+  const [user, setUser] = useState(DEFAULT_USER);
+  // Tracks whether the user has completed phone/SMS auth (required only at checkout)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // ───── Screen stack (push screens from any tab) ─────
   const [screenStack, setScreenStack] = useState([]);
@@ -100,6 +117,9 @@ export default function App() {
   const [showAutoSubscription, setShowAutoSubscription] = useState(false);
   const [checkoutCartSnapshot, setCheckoutCartSnapshot] = useState([]);
 
+  // ───── Home screen map state (persists across tab switches) ─────
+  const [mapCollapsed, setMapCollapsed] = useState(false);
+
   // ───── Checkout flow ─────
   const [paymentMethod, setPaymentMethod] = useState(null);
 
@@ -108,24 +128,56 @@ export default function App() {
   const favorites = useFavorites([0, 5, 10]);
   const storeSelection = useStoreSelection();
 
+  // ───── Admin mode (enabled via #dev hash) ─────
+  const [isAdminMode] = useState(() => window.location.hash === '#dev');
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const { config: adminConfig, updateOnboarding, updateTabs, updateCategories, resetToDefaults } = useAdminConfig();
+
+  // ───── Smart Alerts: push notification when radar finds matches ─────
+  useEffect(() => {
+    if (!storeSelection.matchedAlerts || storeSelection.matchedAlerts.length === 0) return;
+    storeSelection.matchedAlerts.forEach((alert) => {
+      addNotification({
+        type: 'alert',
+        title: `Алёрт: ${alert.category}`,
+        message: `Найдена ${alert.category} со скидкой от ${alert.minDiscount}% в вашем районе`,
+      });
+    });
+  }, [storeSelection.matchedAlerts, addNotification]);
+
   // ═══════════════════════════════════════════════════════
   //  AUTH HANDLERS
   // ═══════════════════════════════════════════════════════
 
   const handleSplashComplete = () => setView(VIEWS.ONBOARD);
-  const handleOnboardingComplete = () => setView(VIEWS.LOGIN);
-  const handleOnboardingSkip = () => setView(VIEWS.LOGIN);
 
-  const handleLoginSubmit = (phoneNumber) => {
-    setPhone(phoneNumber);
-    setView(VIEWS.SMS);
+  const handleBasketBuilderComplete = (prefs) => {
+    try {
+      localStorage.setItem('rf_user_prefs', JSON.stringify(prefs));
+    } catch {
+      // ignore
+    }
+    setUserPrefs(prefs);
+    setView(VIEWS.HUB);
   };
 
-  const handleSmsVerify = () => setView(VIEWS.CARD_BIND);
-  const handleCardBindSuccess = () => setView(VIEWS.HUB);
-  const handleCardBindSkip = () => setView(VIEWS.HUB);
-  const handleSuccessContinue = () => { setView(VIEWS.HUB); setActiveTab('home'); };
-  const handleLogout = () => { popToRoot(); setActiveOverlay(null); setView(VIEWS.LOGIN); };
+  const handleRadarOnboardComplete = useCallback((center, radius) => {
+    if (center && radius) {
+      storeSelection.applyRadar(center, radius);
+    }
+    setView(VIEWS.HUB);
+  }, [storeSelection]);
+
+  const handleOnboardingComplete = () => setView(VIEWS.RADAR_ONBOARD);
+  const handleOnboardingSkip = () => setView(VIEWS.RADAR_ONBOARD);
+
+  const handleLogout = () => {
+    popToRoot();
+    setActiveOverlay(null);
+    setIsAuthenticated(false);
+    setUser(DEFAULT_USER);
+    setView(VIEWS.ONBOARD);
+  };
 
   // ═══════════════════════════════════════════════════════
   //  RADAR + STORE NAVIGATION
@@ -149,8 +201,8 @@ export default function App() {
   );
 
   const handleBrowseAll = useCallback(() => {
-    pushScreen({ type: 'productList', storeId: null });
-  }, [pushScreen]);
+    setMapCollapsed(true);
+  }, []);
 
   // ═══════════════════════════════════════════════════════
   //  PRODUCT NAVIGATION
@@ -251,8 +303,13 @@ export default function App() {
   // ═══════════════════════════════════════════════════════
 
   const handleStartCheckout = useCallback(() => {
-    pushScreen({ type: 'paymentMethod' });
-  }, [pushScreen]);
+    if (!isAuthenticated) {
+      // Push login as a push screen; after success it will proceed to paymentMethod
+      pushScreen({ type: 'checkoutLogin' });
+    } else {
+      pushScreen({ type: 'paymentMethod' });
+    }
+  }, [isAuthenticated, pushScreen]);
 
   const handleSelectPayment = useCallback(
     (method) => {
@@ -315,18 +372,23 @@ export default function App() {
   //  PROFILE NAVIGATION
   // ═══════════════════════════════════════════════════════
 
+  const handleProfileLoginRequest = useCallback(() => {
+    pushScreen({ type: 'profileLogin' });
+  }, [pushScreen]);
+
   const handleProfileNav = useCallback(
     (dest) => {
       switch (dest) {
         case 'settings': pushScreen({ type: 'settings' }); break;
         case 'history': pushScreen({ type: 'orderHistory' }); break;
-        case 'favorites': setActiveTab('favorites'); break;
+        case 'favorites': pushScreen({ type: 'favorites' }); break;
         case 'addresses': pushScreen({ type: 'addresses' }); break;
         case 'payment': pushScreen({ type: 'paymentMethods' }); break;
         case 'smartAlerts': pushScreen({ type: 'smartAlerts' }); break;
         case 'promotions': setActiveOverlay('promotions'); break;
         case 'support': setActiveOverlay('support'); break;
         case 'editProfile': setActiveOverlay('editProfile'); break;
+        case 'preferences': pushScreen({ type: 'preferences' }); break;
         default: break;
       }
     },
@@ -342,15 +404,9 @@ export default function App() {
       case VIEWS.SPLASH:
         return <SplashScreen onComplete={handleSplashComplete} />;
       case VIEWS.ONBOARD:
-        return <OnboardingScreen onComplete={handleOnboardingComplete} onSkip={handleOnboardingSkip} />;
-      case VIEWS.LOGIN:
-        return <LoginScreen onSubmit={handleLoginSubmit} />;
-      case VIEWS.SMS:
-        return <SmsScreen phone={phone} onVerify={handleSmsVerify} />;
-      case VIEWS.CARD_BIND:
-        return <CardBindingScreen onBack={() => setView(VIEWS.SMS)} onSuccess={handleCardBindSuccess} onSkip={handleCardBindSkip} />;
-      case VIEWS.SUCCESS:
-        return <SuccessScreen onContinue={handleSuccessContinue} />;
+        return <OnboardingScreen onComplete={handleOnboardingComplete} onSkip={handleOnboardingSkip} slides={adminConfig.onboarding} />;
+      case VIEWS.RADAR_ONBOARD:
+        return <RadarOnboardingScreen onComplete={handleRadarOnboardComplete} />;
       default:
         return null;
     }
@@ -426,7 +482,83 @@ export default function App() {
           <PaymentMethodScreen
             onSelect={handleSelectPayment}
             onBack={popScreen}
-            onAddCard={() => { popToRoot(); setView(VIEWS.CARD_BIND); }}
+            onAddCard={() => { pushScreen({ type: 'cardBind' }); }}
+          />
+        );
+
+      case 'cardBind':
+        return (
+          <CardBindingScreen
+            onBack={popScreen}
+            onSuccess={popScreen}
+            onSkip={popScreen}
+          />
+        );
+
+      // ── Checkout auth flow (shown as push screens, no re-routing) ──
+      case 'checkoutLogin':
+        return (
+          <LoginScreen
+            onBack={popScreen}
+            onSubmit={(phoneNumber) => {
+              setPhone(phoneNumber);
+              popScreen();
+              pushScreen({ type: 'checkoutSms', phoneNumber });
+            }}
+          />
+        );
+
+      case 'checkoutSms':
+        return (
+          <SmsScreen
+            phone={screen.phoneNumber || phone}
+            onBack={popScreen}
+            onVerify={() => {
+              setIsAuthenticated(true);
+              popScreen();
+              pushScreen({ type: 'paymentMethod' });
+            }}
+          />
+        );
+
+      case 'checkoutCardBind':
+        return (
+          <CardBindingScreen
+            onBack={popScreen}
+            onSuccess={() => {
+              popScreen();
+              pushScreen({ type: 'paymentMethod' });
+            }}
+            onSkip={() => {
+              popScreen();
+              pushScreen({ type: 'paymentMethod' });
+            }}
+          />
+        );
+
+      // ── Profile auth flow (login from ProfileTab) ──
+      case 'profileLogin':
+        return (
+          <LoginScreen
+            onBack={popScreen}
+            onSubmit={(phoneNumber) => {
+              setPhone(phoneNumber);
+              popScreen();
+              pushScreen({ type: 'profileSms', phoneNumber });
+            }}
+          />
+        );
+
+      case 'profileSms':
+        return (
+          <SmsScreen
+            phone={screen.phoneNumber || phone}
+            onBack={popScreen}
+            onVerify={(userData) => {
+              setIsAuthenticated(true);
+              if (userData?.phone) setUser((prev) => ({ ...prev, ...userData }));
+              popToRoot();
+            }}
           />
         );
 
@@ -522,22 +654,49 @@ export default function App() {
           />
         );
 
+      case 'favorites':
+        return (
+          <FavoritesScreen
+            favorites={favorites.favorites}
+            onToggleFavorite={favorites.toggleFavorite}
+            onProductClick={handleProductClick}
+            onAddToCart={handleAddToCart}
+            onBack={popScreen}
+          />
+        );
+
+      case 'preferences':
+        return (
+          <BasketBuilderScreen
+            initialPrefs={userPrefs}
+            onComplete={(prefs) => {
+              try {
+                localStorage.setItem('rf_user_prefs', JSON.stringify(prefs));
+              } catch { /* ignore */ }
+              setUserPrefs(prefs);
+              popScreen();
+            }}
+            onBack={popScreen}
+          />
+        );
+
       default:
         return null;
     }
   };
 
   // ═══════════════════════════════════════════════════════
-  //  RENDER HUB (5 tabs + screen stack)
+  //  RENDER HUB (4 tabs + screen stack)
   // ═══════════════════════════════════════════════════════
 
   const renderHub = () => {
     const topScreen = screenStack.length > 0 ? screenStack[screenStack.length - 1] : null;
+    const hasPushScreen = !!topScreen;
 
     return (
       <div className="flex flex-col h-screen bg-white">
         {/* Main content — either push screen or tab content */}
-        <main className="flex-1 overflow-y-auto no-scrollbar">
+        <main className="flex-1 h-screen overflow-hidden">
           {topScreen ? (
             renderPushScreen(topScreen)
           ) : (
@@ -561,11 +720,32 @@ export default function App() {
                   cartItems={cart.items}
                   onIncrementCart={cart.incrementItem}
                   onDecrementCart={cart.decrementItem}
+                  categories={adminConfig.categories}
+                  userPrefs={userPrefs}
+                  mapCollapsed={mapCollapsed}
+                  onCollapseMap={() => setMapCollapsed(true)}
+                  onExpandMap={() => setMapCollapsed(false)}
                 />
               )}
 
-              {activeTab === 'categories' && (
-                <CategoryBrowserScreen
+              {activeTab === 'catalog' && (
+                <CatalogTabFull
+                  favorites={favorites.favorites}
+                  onToggleFavorite={favorites.toggleFavorite}
+                  onProductClick={handleProductClick}
+                  onAddToCart={handleAddToCart}
+                  shoppingMode={storeSelection.shoppingMode}
+                  selectedStore={storeSelection.selectedStore}
+                  storeProducts={storeSelection.storeProducts}
+                  availableProducts={storeSelection.availableProducts}
+                  radarApplied={storeSelection.radarApplied}
+                  storesInRadius={storeSelection.storesInRadius}
+                  cartItems={cart.items}
+                  onIncrementCart={cart.incrementItem}
+                  onDecrementCart={cart.decrementItem}
+                  categories={adminConfig.categories}
+                  userPrefs={userPrefs}
+                  onSearch={handleSearch}
                   onCategorySelect={handleSubcategorySelect}
                 />
               )}
@@ -580,14 +760,7 @@ export default function App() {
                   onCheckout={handleStartCheckout}
                   onContinueShopping={() => { setActiveTab('home'); }}
                   shoppingMode={storeSelection.shoppingMode}
-                />
-              )}
-
-              {activeTab === 'favorites' && (
-                <FavoritesScreen
-                  favorites={favorites.favorites}
-                  onToggleFavorite={favorites.toggleFavorite}
-                  onProductClick={handleProductClick}
+                  availableProducts={storeSelection.availableProducts}
                   onAddToCart={handleAddToCart}
                 />
               )}
@@ -595,6 +768,8 @@ export default function App() {
               {activeTab === 'profile' && (
                 <ProfileScreen
                   user={user}
+                  isAuthenticated={isAuthenticated}
+                  onLoginRequest={handleProfileLoginRequest}
                   favoritesCount={favorites.count}
                   onSettingsClick={() => handleProfileNav('settings')}
                   onHistoryClick={() => handleProfileNav('history')}
@@ -607,21 +782,25 @@ export default function App() {
                   onChangePhoto={() => handleProfileNav('editProfile')}
                   onLogout={handleLogout}
                   onSmartAlertsClick={() => handleProfileNav('smartAlerts')}
+                  onPreferencesClick={() => handleProfileNav('preferences')}
                 />
               )}
             </>
           )}
         </main>
 
-        {/* Bottom navigation — always visible in hub */}
-        <BottomNav
-          activeTab={activeTab}
-          onTabChange={(tab) => {
-            popToRoot();
-            setActiveTab(tab);
-          }}
-          cartCount={cart.stats.count}
-        />
+        {/* Bottom navigation — hidden when a push screen is visible */}
+        {!hasPushScreen && (
+          <BottomNav
+            activeTab={activeTab}
+            onTabChange={(tab) => {
+              popToRoot();
+              setActiveTab(tab);
+            }}
+            cartCount={cart.stats.count}
+            tabLabels={adminConfig.tabs}
+          />
+        )}
       </div>
     );
   };
@@ -655,7 +834,10 @@ export default function App() {
           <EditProfileOverlay
             user={user}
             onClose={() => setActiveOverlay(null)}
-            onSave={() => setActiveOverlay(null)}
+            onSave={(data) => {
+              setUser((prev) => ({ ...prev, ...data }));
+              setActiveOverlay(null);
+            }}
           />
         );
       default:
@@ -690,6 +872,30 @@ export default function App() {
           onSkip={handleSubscriptionSkip}
           onClose={handleSubscriptionSkip}
         />
+      )}
+
+      {/* Admin mode — floating button + panel, rendered via portal to always be on top */}
+      {isAdminMode && createPortal(
+        <>
+          <button
+            onClick={() => setShowAdminPanel(true)}
+            className="fixed bottom-24 right-4 z-[999999] w-11 h-11 bg-black rounded-2xl flex items-center justify-center shadow-xl"
+            title="Admin Panel"
+          >
+            <span className="text-acid text-[9px] font-black leading-none">DEV</span>
+          </button>
+          {showAdminPanel && (
+            <AdminPanel
+              config={adminConfig}
+              onUpdateOnboarding={updateOnboarding}
+              onUpdateTabs={updateTabs}
+              onUpdateCategories={updateCategories}
+              onResetAll={resetToDefaults}
+              onClose={() => setShowAdminPanel(false)}
+            />
+          )}
+        </>,
+        document.body
       )}
     </div>
   );

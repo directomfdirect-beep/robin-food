@@ -23,6 +23,7 @@ export const MapTab = ({ isActive, onApplyRadar }) => {
     enabled: isActive,
     radius: radarRadius,
     center: center,
+    containerId: 'osm-map-tab',
   });
 
   const handleAddressSelect = useCallback((data) => {
@@ -65,7 +66,7 @@ export const MapTab = ({ isActive, onApplyRadar }) => {
       </button>
 
       {/* Map container */}
-      <div id="osm-map" className="flex-1 w-full h-full z-10" />
+      <div id="osm-map-tab" className="flex-1 w-full h-full z-10" />
 
       {/* Minimalist radar controls */}
       <div className="absolute bottom-6 left-4 right-4 z-20">

@@ -51,10 +51,10 @@ export const SBPPaymentSheet = ({ amount, onSuccess, onCancel, onClose }) => {
         <div className="px-6 pb-10 pt-4 text-center">
           {status === 'waiting' && (
             <>
-              <div className="w-16 h-16 bg-brand-green/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <Smartphone size={32} className="text-brand-green" />
+              <div className="w-16 h-16 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <Smartphone size={32} className="text-black" />
               </div>
-              <h2 className="font-black italic uppercase text-xl mb-2">Оплата через СБП</h2>
+              <h2 className="ga-title text-[22px] mb-2">Оплата через СБП</h2>
               <p className="text-sm text-gray-500 mb-6">
                 Отсканируйте QR-код или нажмите кнопку для оплаты
               </p>
@@ -71,7 +71,7 @@ export const SBPPaymentSheet = ({ amount, onSuccess, onCancel, onClose }) => {
                 </div>
               </div>
 
-              <p className="font-bold text-2xl text-brand-green mb-2">₽{amount}</p>
+              <p className="font-bold text-2xl text-black mb-2">₽{amount}</p>
 
               <div className="flex items-center justify-center gap-2 text-gray-400 mb-6">
                 <Clock size={14} />
@@ -94,10 +94,10 @@ export const SBPPaymentSheet = ({ amount, onSuccess, onCancel, onClose }) => {
 
           {status === 'confirmed' && (
             <>
-              <div className="w-16 h-16 bg-brand-green/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle size={32} className="text-brand-green" />
+              <div className="w-16 h-16 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={32} className="text-black" />
               </div>
-              <h2 className="font-black italic uppercase text-xl mb-2">Оплата прошла!</h2>
+              <h2 className="ga-title text-[22px] mb-2">Оплата прошла!</h2>
               <p className="text-sm text-gray-500">Переходим к отслеживанию заказа...</p>
             </>
           )}
@@ -107,7 +107,7 @@ export const SBPPaymentSheet = ({ amount, onSuccess, onCancel, onClose }) => {
               <div className="w-16 h-16 bg-error/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
                 <Clock size={32} className="text-error" />
               </div>
-              <h2 className="font-black italic uppercase text-xl mb-2">Время истекло</h2>
+              <h2 className="ga-title text-[22px] mb-2">Время истекло</h2>
               <p className="text-sm text-gray-500 mb-6">Попробуйте оплатить снова</p>
               <Button onClick={onCancel} fullWidth size="lg">
                 Вернуться в корзину

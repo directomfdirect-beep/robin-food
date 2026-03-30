@@ -51,3 +51,6 @@ coverage
 # Misc
 *.pem
 Thumbs.db
+
+*storybook.log
+storybook-static

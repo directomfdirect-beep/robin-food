@@ -3,11 +3,14 @@ import { CATEGORIES } from '@/data/constants';
 
 /**
  * Category filter pills
+ * @param {string[]} categories - Optional override for category list (from admin config)
  */
-export const CategoryFilter = ({ selected, onSelect }) => {
+export const CategoryFilter = ({ selected, onSelect, categories }) => {
+  const items = categories && categories.length > 0 ? categories : CATEGORIES;
+
   return (
     <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-      {CATEGORIES.map((category) => (
+      {items.map((category) => (
         <button
           key={category}
           onClick={() => onSelect(category)}

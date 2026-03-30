@@ -50,34 +50,34 @@ export const ProductDetailScreen = ({
   if (!product) return null;
 
   return (
-    <div className="min-h-screen bg-white animate-fade-in pb-32">
-      {/* Image header */}
-      <div className="relative">
+    <div className="h-full overflow-y-auto bg-white animate-fade-in pb-32">
+      {/* Image header with sticky back/favorite bar */}
+      <div className="relative" style={{ height: '45vh' }}>
         <img
           src={product.image}
           alt={product.title}
-          className="w-full h-80 object-cover"
+          className="w-full h-full object-cover"
         />
+        {/* Gradient overlay at bottom for readability */}
+        <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-white/60 to-transparent" />
 
-        <button
-          onClick={onBack}
-          className="absolute top-6 left-4 z-20 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
-        >
-          <ArrowLeft size={20} />
-        </button>
-
-        <button
-          onClick={() => onToggleFavorite?.(product.id)}
-          className="absolute top-6 right-4 z-20 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
-        >
-          <Heart
-            size={20}
-            className={isFavorite ? 'text-error fill-error' : 'text-gray-400'}
-          />
-        </button>
-
-        <div className="absolute top-6 left-20 bg-black text-acid px-4 py-2 rounded-2xl ga-button text-sm shadow-xl">
-          -{priceInfo.discountPercent}%
+        {/* Header bar — back + favorite */}
+        <div className="absolute top-0 inset-x-0 px-4 pt-6 flex items-center justify-between z-20">
+          <button
+            onClick={onBack}
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <button
+            onClick={() => onToggleFavorite?.(product.id)}
+            className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg"
+          >
+            <Heart
+              size={20}
+              className={isFavorite ? 'text-error fill-error' : 'text-gray-400'}
+            />
+          </button>
         </div>
 
         {hoursLeft !== null && hoursLeft < 48 && (
@@ -90,30 +90,33 @@ export const ProductDetailScreen = ({
 
       {/* Content */}
       <div className="px-6 pt-6">
-        {/* Title + price */}
-        <div className="flex justify-between items-start gap-4 mb-4">
-          <div className="flex-1">
-            <h1 className="font-black italic uppercase text-2xl leading-tight mb-2">
-              {product.title}
-            </h1>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 text-orange-500">
-                <Star size={16} fill="currentColor" stroke="none" />
-                <span className="font-bold text-sm">{product.rating}</span>
-              </div>
-              {product.reviewsCount && (
-                <span className="text-xs text-gray-400">{product.reviewsCount} отзывов</span>
-              )}
-            </div>
+        {/* Title */}
+        <h1 className="ga-title text-[32px] leading-tight mb-2">
+          {product.title}
+        </h1>
+
+        {/* Discount badge + rating row */}
+        <div className="flex items-center gap-3 mb-4">
+          <span className="bg-acid text-black px-3 py-1.5 rounded-xl ga-price text-[15px] leading-none">
+            -{priceInfo.discountPercent}%
+          </span>
+          <div className="flex items-center gap-1 text-orange-500">
+            <Star size={16} fill="currentColor" stroke="none" />
+            <span className="font-bold text-sm">{product.rating}</span>
           </div>
-          <div className="text-right flex-shrink-0">
-            <span className="line-through text-sm text-gray-400 block">
-              ₽{(product.basePrice * quantity).toFixed(0)}
-            </span>
-            <span className="font-bold text-3xl text-brand-green">
-              ₽{priceInfo.totalPrice}
-            </span>
-          </div>
+          {product.reviewsCount && (
+            <span className="text-xs text-gray-400">{product.reviewsCount} отзывов</span>
+          )}
+        </div>
+
+        {/* Prices */}
+        <div className="flex items-baseline gap-3 mb-4">
+          <span className="ga-price text-[40px] text-black leading-none">
+            ₽{priceInfo.totalPrice}
+          </span>
+          <span className="ga-price-old text-base">
+            ₽{(product.basePrice * quantity).toFixed(0)}
+          </span>
         </div>
 
         {/* Expiry */}
@@ -130,7 +133,7 @@ export const ProductDetailScreen = ({
         {product.storeName && (
           <button
             onClick={() => onViewStore?.(product.storeId)}
-            className="flex items-center gap-2 mb-6 text-gray-500 hover:text-brand-green transition-colors"
+            className="flex items-center gap-2 mb-6 text-gray-500"
           >
             <MapPin size={14} />
             <span className="text-sm">
@@ -159,7 +162,7 @@ export const ProductDetailScreen = ({
           </div>
           <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-brand-green to-emerald-400 transition-all duration-500"
+              className="h-full bg-black transition-all duration-500"
               style={{ width: `${Math.min((quantity / maxQuantity) * 100, 100)}%` }}
             />
           </div>

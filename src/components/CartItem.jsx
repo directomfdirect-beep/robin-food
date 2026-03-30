@@ -19,7 +19,7 @@ export const CartItem = ({ item, onIncrement, onDecrement, onRemove }) => {
             className="w-20 h-20 rounded-2xl object-cover"
           />
           {/* Discount badge */}
-          <div className="absolute -top-1 -left-1 bg-black text-acid px-2 py-0.5 rounded-lg ga-button text-[9px]">
+          <div className="absolute -top-1 -left-1 bg-acid text-black px-2 py-0.5 rounded-lg ga-price text-[11px] leading-none">
             -{priceInfo.discountPercent}%
           </div>
         </div>
@@ -32,7 +32,7 @@ export const CartItem = ({ item, onIncrement, onDecrement, onRemove }) => {
           
           {/* Price breakdown */}
           <div className="flex items-baseline gap-2 mb-2">
-            <span className="ga-price text-lg text-brand-green">
+            <span className="ga-price text-lg text-black">
               ₽{priceInfo.totalPrice}
             </span>
             <span className="ga-body text-xs text-gray-400">

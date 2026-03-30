@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { ArrowLeft, MapPin, CreditCard, Clock, ShoppingBag, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, Clock, ShoppingBag, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { calculatePrices } from '@/utils/price';
 
@@ -17,6 +17,7 @@ export const OrderConfirmationScreen = ({
 }) => {
   const [agreed, setAgreed] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [paymentError, setPaymentError] = useState(false);
 
   const isMultiStore = shoppingMode === 'multi';
 
@@ -41,12 +42,13 @@ export const OrderConfirmationScreen = ({
   const handleConfirm = useCallback(async () => {
     if (!agreed || processing) return;
     setProcessing(true);
+    setPaymentError(false);
     await new Promise((r) => setTimeout(r, 1500));
     if (Math.random() > 0.1) {
       onConfirm();
     } else {
       setProcessing(false);
-      alert('Ошибка при обработке платежа. Попробуйте ещё раз.');
+      setPaymentError(true);
     }
   }, [agreed, processing, onConfirm]);
 
@@ -59,7 +61,7 @@ export const OrderConfirmationScreen = ({
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">Подтверждение</h1>
+        <h1 className="ga-title text-[20px]">Подтверждение</h1>
       </div>
 
       <div className="p-4 space-y-4">
@@ -67,8 +69,8 @@ export const OrderConfirmationScreen = ({
         {groupedItems.map((group, idx) => (
           <div key={idx} className="bg-white rounded-3xl p-5 border border-gray-100">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 bg-brand-green/10 rounded-xl flex items-center justify-center">
-                <MapPin size={16} className="text-brand-green" />
+              <div className="w-8 h-8 bg-gray-100 rounded-xl flex items-center justify-center">
+                <MapPin size={16} className="text-black" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm truncate">{group.storeName}</p>
@@ -103,12 +105,12 @@ export const OrderConfirmationScreen = ({
           onClick={onChangePayment}
           className="w-full bg-white rounded-3xl p-5 border border-gray-100 flex items-center gap-4"
         >
-          <CreditCard size={20} className="text-brand-green" />
+          <CreditCard size={20} className="text-black" />
           <div className="flex-1 text-left">
             <p className="text-[10px] font-bold uppercase text-gray-400">Оплата</p>
             <p className="font-bold text-sm">{paymentLabel}</p>
           </div>
-          <span className="text-xs text-brand-green font-bold">Изменить</span>
+          <span className="text-xs text-black font-bold">Изменить</span>
         </button>
 
         {/* Total */}
@@ -124,8 +126,8 @@ export const OrderConfirmationScreen = ({
             </div>
           )}
           <div className="border-t border-gray-100 pt-3 mt-2 flex justify-between items-center">
-            <span className="font-black italic uppercase text-lg">Итого</span>
-            <span className="font-bold text-2xl text-brand-green">₽{cartStats.totalPrice}</span>
+            <span className="ga-title text-[20px]">Итого</span>
+            <span className="ga-price text-[28px] text-black leading-none">₽{cartStats.totalPrice}</span>
           </div>
         </div>
 
@@ -135,12 +137,22 @@ export const OrderConfirmationScreen = ({
             type="checkbox"
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-1 w-5 h-5 rounded border-gray-300 text-brand-green focus:ring-brand-green"
+            className="mt-1 w-5 h-5 rounded border-gray-300 text-black focus:ring-acid"
           />
           <span className="text-xs text-gray-400">
             Нажимая «Оплатить», я соглашаюсь с условиями оферты и политикой обработки персональных данных
           </span>
         </label>
+
+        {/* Payment error banner */}
+        {paymentError && (
+          <div className="flex items-center gap-3 bg-red-50 border border-red-100 rounded-2xl p-4">
+            <AlertCircle size={18} className="text-error flex-shrink-0" />
+            <p className="text-sm text-error font-medium">
+              Ошибка при обработке платежа. Попробуйте ещё раз.
+            </p>
+          </div>
+        )}
 
         <Button
           onClick={handleConfirm}

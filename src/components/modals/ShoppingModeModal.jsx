@@ -24,7 +24,7 @@ export const ShoppingModeModal = ({ store, onSingleStore, onMultiStore, onClose 
         </button>
 
         <div className="px-6 pb-10 pt-4">
-          <h2 className="font-black italic uppercase text-xl leading-tight mb-1">
+          <h2 className="ga-title text-[22px] leading-tight mb-1">
             Как будете забирать?
           </h2>
           <p className="text-sm text-gray-500 mb-6">
@@ -34,7 +34,7 @@ export const ShoppingModeModal = ({ store, onSingleStore, onMultiStore, onClose 
           {store && (
             <div className="bg-gray-50 rounded-2xl p-4 mb-6 flex items-center gap-3">
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                <Store size={20} className="text-brand-green" />
+                <Store size={20} className="text-black" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm truncate">{store.name}</p>
@@ -46,7 +46,7 @@ export const ShoppingModeModal = ({ store, onSingleStore, onMultiStore, onClose 
           <div className="space-y-3">
             <button
               onClick={onSingleStore}
-              className="w-full p-5 bg-brand-green text-white rounded-2xl flex items-center gap-3 hover:brightness-95 transition-all active:scale-[0.98]"
+              className="w-full p-5 bg-black text-white rounded-2xl flex items-center gap-3 hover:brightness-95 transition-all active:scale-[0.98]"
             >
               <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
                 <Store size={22} />
@@ -62,7 +62,7 @@ export const ShoppingModeModal = ({ store, onSingleStore, onMultiStore, onClose 
               className="w-full p-5 bg-gray-50 rounded-2xl flex items-center gap-3 hover:bg-gray-100 transition-all active:scale-[0.98] border border-gray-100"
             >
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-                <MapPin size={22} className="text-brand-green" />
+                <MapPin size={22} className="text-black" />
               </div>
               <div className="flex-1 text-left">
                 <p className="font-bold text-sm mb-0.5">С разных адресов</p>

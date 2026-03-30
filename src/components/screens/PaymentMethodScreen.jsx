@@ -29,7 +29,7 @@ export const PaymentMethodScreen = ({ onSelect, onBack, onAddCard }) => {
         <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
           <ArrowLeft size={20} />
         </button>
-        <h1 className="font-black italic uppercase text-lg">Способ оплаты</h1>
+        <h1 className="ga-title text-[20px]">Способ оплаты</h1>
       </div>
 
       <div className="p-6 space-y-3">
@@ -42,18 +42,18 @@ export const PaymentMethodScreen = ({ onSelect, onBack, onAddCard }) => {
               onClick={() => setSelected(m.id)}
               className={`w-full p-4 rounded-2xl flex items-center gap-4 transition-all text-left ${
                 isActive
-                  ? 'bg-brand-green/[0.08] border-[1.5px] border-brand-green'
+                  ? 'bg-black/[0.08] border-[1.5px] border-black'
                   : 'bg-gray-50 border border-gray-100 hover:bg-gray-100'
               }`}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isActive ? 'bg-brand-green/20' : 'bg-white'}`}>
-                <Icon size={20} className={isActive ? 'text-brand-green' : 'text-gray-400'} />
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isActive ? 'bg-acid/20' : 'bg-white'}`}>
+                <Icon size={20} className={isActive ? 'text-black' : 'text-gray-400'} />
               </div>
               <div className="flex-1">
                 <p className="font-bold text-sm">{m.label}</p>
                 {m.sub && <p className="text-[10px] text-gray-400">{m.sub}</p>}
               </div>
-              {isActive && <Check size={20} className="text-brand-green" />}
+              {isActive && <Check size={20} className="text-black" />}
             </button>
           );
         })}

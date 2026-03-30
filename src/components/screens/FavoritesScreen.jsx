@@ -30,7 +30,7 @@ export const FavoritesScreen = ({
     <div className="min-h-full bg-white animate-fade-in pb-32">
       {/* Header */}
       <div className="p-6 pb-2">
-        <h1 className="font-black italic uppercase text-2xl leading-tight">Избранное</h1>
+        <h1 className="ga-title text-[26px] leading-tight">Избранное</h1>
       </div>
 
       {/* Filter tabs */}
@@ -54,7 +54,7 @@ export const FavoritesScreen = ({
           <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
             <Heart size={40} className="text-gray-300" />
           </div>
-          <h3 className="font-black italic uppercase text-xl text-center mb-2">Пусто</h3>
+          <h3 className="ga-title text-[22px] text-center mb-2">Пусто</h3>
           <p className="text-sm text-gray-400 text-center">
             Добавьте товары в избранное, нажав ★ на карточке товара
           </p>

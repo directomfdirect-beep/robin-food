@@ -1,8 +1,7 @@
 import React from 'react';
 
 /**
- * DS v3 Category Chip
- * Icon 24 + label, H=64px (icon area 40 + label below)
+ * Category chip — editorial pill
  */
 export const CategoryChip = ({
   icon: Icon,
@@ -23,21 +22,21 @@ export const CategoryChip = ({
     >
       <div
         className={`
-          w-10 h-10 rounded-ds-m flex items-center justify-center
+          w-10 h-10 rounded-2xl flex items-center justify-center
           transition-all duration-200
           ${active
-            ? 'bg-semantic-cta-primary/10 border-[1.5px] border-semantic-cta-primary'
-            : 'bg-base-surface border border-base-divider hover:bg-base-divider'
+            ? 'bg-black border-2 border-black'
+            : 'bg-gray-100 border-2 border-transparent hover:bg-gray-200'
           }
         `}
       >
         {Icon ? (
-          <Icon size={24} className={active ? 'text-semantic-cta-primary' : 'text-base-text-secondary'} />
+          <Icon size={20} className={active ? 'text-acid' : 'text-gray-500'} />
         ) : emoji ? (
           <span className="text-xl">{emoji}</span>
         ) : null}
       </div>
-      <span className={`ds-label-tab ${active ? 'text-semantic-cta-primary' : 'text-base-text-secondary'}`}>
+      <span className={`text-[10px] font-bold uppercase tracking-wide ${active ? 'text-black' : 'text-gray-400'}`}>
         {label}
       </span>
     </button>

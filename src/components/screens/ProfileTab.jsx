@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import robinCatalogBlackLogo from '/robin-catalog-black.png';
 import {
   Settings,
   Camera,
@@ -11,7 +12,6 @@ import {
   MapPin,
   CreditCard,
   Bell,
-  Moon,
   Shield,
   FileText,
   Lock,
@@ -20,6 +20,7 @@ import {
   Mail,
   Phone,
   Tag,
+  LayoutGrid,
 } from 'lucide-react';
 import { DEFAULT_USER } from '@/data/constants';
 
@@ -50,12 +51,12 @@ const MenuItem = ({ icon: Icon, label, badge, onClick, danger = false, toggle, t
       {toggle ? (
         <div
           className={`w-12 h-7 rounded-full p-1 transition-colors ${
-            toggleValue ? 'bg-brand-green' : 'bg-gray-200'
+            toggleValue ? 'bg-black' : 'bg-gray-200'
           }`}
         >
           <div
-            className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${
-              toggleValue ? 'translate-x-5' : 'translate-x-0'
+            className={`w-5 h-5 rounded-full shadow transition-transform ${
+              toggleValue ? 'translate-x-5 bg-acid' : 'translate-x-0 bg-white'
             }`}
           />
         </div>
@@ -80,6 +81,8 @@ const SectionHeader = ({ title }) => (
  */
 export const ProfileTab = ({
   user = DEFAULT_USER,
+  isAuthenticated = false,
+  onLoginRequest,
   favoritesCount = 0,
   onSettingsClick,
   onHistoryClick,
@@ -95,13 +98,13 @@ export const ProfileTab = ({
   onPrivacyPolicyClick,
   onPrivacySettingsClick,
   onSmartAlertsClick,
+  onPreferencesClick,
   onLogout,
 }) => {
   const [notifications, setNotifications] = useState(user.preferences?.notificationsEnabled ?? true);
-  const [darkMode, setDarkMode] = useState(user.preferences?.theme === 'dark');
 
   return (
-    <div className="h-full bg-gray-50 animate-fade-in pb-24 overflow-y-auto">
+    <div className="h-full bg-gray-50 animate-fade-in pb-24 overflow-y-auto relative">
       {/* Header section */}
       <div className="bg-white p-8 pb-12 rounded-b-[48px] flex flex-col items-center relative shadow-sm">
         {/* Settings button */}
@@ -111,6 +114,9 @@ export const ProfileTab = ({
         >
           <Settings size={22} />
         </button>
+
+        {/* Brand logo */}
+        <img src={robinCatalogBlackLogo} alt="Robin Food" className="h-9 object-contain mb-6 self-start" />
 
         {/* Avatar */}
         <div className="relative group">
@@ -167,7 +173,7 @@ export const ProfileTab = ({
             <p className="ga-label text-[9px] text-gray-400 mt-1">Заказов</p>
           </div>
           <div className="border-x border-gray-100">
-            <p className="ga-price text-xl text-brand-green">₽{user.spent}</p>
+            <p className="ga-price text-xl text-acid">₽{user.spent}</p>
             <p className="ga-label text-[9px] text-gray-400 mt-1">Эко-экономия</p>
           </div>
           <div>
@@ -179,13 +185,13 @@ export const ProfileTab = ({
 
       {/* Saved food card */}
       <div className="px-4 mt-4">
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-3xl border border-green-100 flex items-center gap-4">
-          <div className="p-3 bg-white rounded-2xl shadow-sm">
-            <Leaf size={24} className="text-brand-green" />
+        <div className="bg-black p-5 rounded-3xl flex items-center gap-4">
+          <div className="p-3 bg-acid/20 rounded-2xl">
+            <Leaf size={24} className="text-acid" />
           </div>
           <div>
-            <p className="ga-price text-lg text-brand-green">{user.savedFoodKg} кг</p>
-            <p className="ga-body text-xs text-gray-500">Спасено продуктов</p>
+            <p className="ga-price text-lg text-acid">{user.savedFoodKg} кг</p>
+            <p className="ga-body text-xs text-gray-400">Спасено продуктов</p>
           </div>
         </div>
       </div>
@@ -229,6 +235,13 @@ export const ProfileTab = ({
             label="Промокоды"
             onClick={onPromotionsClick}
           />
+          {onPreferencesClick && (
+            <MenuItem
+              icon={LayoutGrid}
+              label="Мои предпочтения"
+              onClick={onPreferencesClick}
+            />
+          )}
         </div>
 
         {/* Settings section */}
@@ -240,13 +253,6 @@ export const ProfileTab = ({
             toggle
             toggleValue={notifications}
             onToggle={setNotifications}
-          />
-          <MenuItem
-            icon={Moon}
-            label="Тёмная тема"
-            toggle
-            toggleValue={darkMode}
-            onToggle={setDarkMode}
           />
           <MenuItem
             icon={Shield}
@@ -295,6 +301,26 @@ export const ProfileTab = ({
           <p className="ga-body text-[10px] text-gray-300">Версия 1.0.0</p>
         </div>
       </div>
+
+      {/* Auth overlay — shown when user is not logged in */}
+      {!isAuthenticated && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm px-8 gap-4">
+          <h2 className="ga-title text-2xl text-center">Личный кабинет</h2>
+          <p className="ga-body text-sm text-gray-500 text-center">Войдите, чтобы видеть заказы, бонусы и настройки</p>
+          <button
+            onClick={onLoginRequest}
+            className="w-full py-4 bg-black text-acid rounded-2xl ga-button text-sm"
+          >
+            Войти
+          </button>
+          <button
+            onClick={onLoginRequest}
+            className="w-full py-4 border border-gray-200 rounded-2xl ga-button text-black text-sm"
+          >
+            Зарегистрироваться
+          </button>
+        </div>
+      )}
     </div>
   );
 };
